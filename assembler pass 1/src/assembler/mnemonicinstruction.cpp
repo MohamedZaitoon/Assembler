@@ -16,9 +16,6 @@ mnemonic_instruction::mnemonic_instruction(){
 mnemonic_instruction::~mnemonic_instruction() {
 }
 
-string mnemonic_instruction::get_operation(){
-	return this->mnemonic;
-}
 bool mnemonic_instruction::has_label(){
 	return !this->label.empty();
 }
@@ -28,19 +25,7 @@ bool mnemonic_instruction::is_comment(){
 	return false;
 }
 
-void mnemonic_instruction::seterror(string e){
-	this->error = e;
-}
-
-string mnemonic_instruction::geterror(){
-	return this->error;
-}
 bool mnemonic_instruction::has_error(){
 	return !this->error.empty();
 }
-void mnemonic_instruction::setformat4(bool f){
-	this->formate4 = f;
-}
-bool mnemonic_instruction::is_formate4(){
-	return this->formate4;
-}
+

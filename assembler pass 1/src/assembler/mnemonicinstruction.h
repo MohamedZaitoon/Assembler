@@ -23,15 +23,56 @@ public:
 
 	bool is_comment();
 	bool has_label();
-
-	string get_operation();
-
-	void seterror(string e);
-	string geterror();
 	bool has_error();
 
-	bool is_formate4();
-	void setformat4(bool f);
+
+	const string& getComment() const {
+		return comment;
+	}
+
+	void setComment(const string& comment) {
+		this->comment = comment;
+	}
+
+	const string& getError() const {
+		return error;
+	}
+
+	void setError(const string& error) {
+		this->error = error;
+	}
+
+	bool isFormate4() const {
+		return formate4;
+	}
+
+	void setFormate4(bool formate4) {
+		this->formate4 = formate4;
+	}
+
+	const string& getLabel() const {
+		return label;
+	}
+
+	void setLabel(const string& label) {
+		this->label = label;
+	}
+
+	const string& getMnemonic() const {
+		return mnemonic;
+	}
+
+	void setMnemonic(const string& mnemonic) {
+		this->mnemonic = mnemonic;
+	}
+
+	const string& getOperand() const {
+		return operand;
+	}
+
+	void setOperand(const string& operand) {
+		this->operand = operand;
+	}
 };
 
 #endif

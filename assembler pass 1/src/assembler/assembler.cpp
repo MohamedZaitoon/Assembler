@@ -57,7 +57,7 @@ string pass1(string path) {
 		int siz = code_lines.size();
 		parser p;
 		instruct ins = p.parse(code_lines[0]);
-		string op = to_upper(ins.get_operation());
+		string op = to_upper(ins.getMnemonic());
 
 		if (!ins.has_error() && !ins.is_comment() && op == "START") {
 
@@ -72,7 +72,7 @@ string pass1(string path) {
 				//handel when there is an error
 				continue;
 			}
-			op  = to_upper(ins.get_operation());
+			op  = to_upper(ins.getMnemonic());
 			if(op == "END") {break;}// handel when the end of operation
 			if(!ins.is_comment()){
 				if(ins.has_label()){
@@ -118,6 +118,12 @@ template<typename T>
 string dec_to_hex(T d) {
 	stringstream ss;
 	ss << std::hex << d;
+	return ss.str();
+}
+
+string to_string(int d) {
+	stringstream ss;
+	ss << d;
 	return ss.str();
 }
 

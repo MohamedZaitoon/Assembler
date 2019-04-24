@@ -1,6 +1,7 @@
 #include <iostream>
 #include "assembler/assembler.h"
 #include "assembler/parser.h"
+#include "assembler/mnemonicinstruction.h"
 #include <sstream>
 using namespace std;
 template<typename T>
@@ -18,11 +19,9 @@ string dec_to_hex(T d){
 	return ss.str();
 }
 int main() {
-	string path = "T_F.txt";
-	pass1(path);
 	parser p;
-	cout<<(p.optab.find("SUB") == p.optab.end())<<endl;
-	//cout<<c.opcode<<endl;
-	cout<<"done"<<endl;
+	mnemonic_instruction m;
+	m = p.parse("rsub");
+	cout<<m.getMnemonic()<<"  m"<<endl;
 	return 0;
 }

@@ -2,8 +2,23 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <regex>
+#include "assembler.h"
 using namespace std;
 typedef mnemonic_instruction instruct;
+
+const regex comment("^\\s*[\\.][\\s\\S]*");
+
+const regex opcode("([+])?([\\S]+)");
+
+const regex operand("^([#*@])?\\s*(\\w+)\\s*([,])?\\s*(\\w+)?$");
+
+const regex label("^\\s*(\\w+)$\\s");
+
+const regex instruction("^\\s*(?:(\\S+)?\\s+)?"
+		"(\\s*[+]?[\\w]+)\\s*"
+		"(?:\\s+([#@,\\w\\s]+)?\\s*)?"
+		"(?:\\s+\\.([\\s\\S]+)?)?$");
 
 map<string, info> optab;
 parser::parser() {
@@ -14,9 +29,73 @@ parser::~parser() {
 }
 
 instruct parser::parse(string ins) {
-
 	instruct x;
+	smatch result;
+	if (regex_match(ins, result, comment)) {
+		x.setComment(*result.begin());
+		return x;
+	} else {
+		if (regex_search(ins, result, instruction)) {
+			smatch groups;
+			cout<<result.size()<<endl;
+			if (result.size() == 5) {
+				one_field(&x, result[1]);
+			} else if (result.size() == 2) {
+				two_field(&x, result);
+			} else if (result.size() == 3) {
+
+			} else if (result.size() == 4) {
+
+			}
+
+
+		} else {
+			x.setError("Invalid instruction syntax");
+			return x;
+
+		}
+	}
 	return x;
+}
+
+void parser::one_field(mnemonic_instruction* x, string field) {
+	smatch groups;
+	if (regex_search(field, groups, opcode)) {
+		if (groups.size() == 2) {
+			x->setFormate4(true);
+			string op = groups[1].str();
+			check_mnemonic(x, op, 0);
+			x->setMnemonic(field);
+
+		} else if (groups.size() == 1) {
+			string op = *groups.begin();
+			check_mnemonic(x, op, 0);
+			x->setMnemonic(op);
+
+		} else {
+			x->setError("Invalid instruction syntax");
+		}
+
+	}
+}
+
+void parser::two_field(mnemonic_instruction* x, smatch field) {
+
+}
+
+void parser::check_mnemonic(mnemonic_instruction*x, string op, int noOperand) {
+	auto entry = optab.find(op);
+	if (entry == optab.end()) {
+		x->setError("this is invalid mnemonic instruction");
+	} else {
+		info t = entry->second;
+		if (x->isFormate4() && t.formate == 2) {
+			x->setError(op + " must be format 2");
+			x->setFormate4(false);
+		} else if (t.operands != noOperand) {
+			x->setError(op + " must have " + to_string(t.operands) + "operands");
+		}
+	}
 }
 
 void parser::load_optab() {
@@ -85,6 +164,7 @@ void parser::load_optab() {
 void parser::add(string name, info i) {
 	this->optab.insert(make_pair(name, i));
 }
+
 info parser::make_info(unsigned int f, string s, unsigned int opr) {
 	info i(f, s, opr);
 	return i;

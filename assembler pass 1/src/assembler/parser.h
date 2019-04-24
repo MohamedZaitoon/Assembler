@@ -3,6 +3,8 @@
 #include "mnemonicinstruction.h"
 #include <string>
 #include <map>
+#include <regex>
+
 class info {
 
 public:
@@ -26,6 +28,11 @@ private:
 	void load_optab();
 	void add(string name, info i);
 	info make_info(unsigned int f, string s, unsigned int opr);
+	void check_mnemonic(mnemonic_instruction*x,string op,int noOperand);
+	void one_field(mnemonic_instruction*x, string field);
+	void two_field(mnemonic_instruction*x,smatch field);
+	void three_field(mnemonic_instruction*x,smatch field);
+	void four_field(mnemonic_instruction*x,smatch field);
 };
 
 #endif /* ASSEMBLER_PARSER_H_ */

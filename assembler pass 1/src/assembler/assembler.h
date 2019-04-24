@@ -5,6 +5,7 @@ using namespace std;
 
 string pass1(string);
 string to_upper(string s);
+string to_string(int d);
 
 
 #endif /* ASSEMBLER_ASSEMBLER_H_ */
