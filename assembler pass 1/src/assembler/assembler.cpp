@@ -99,7 +99,7 @@ void writeListFile(ofstream& w, int line_no, long long address,
 			<< setw(jf) << x.getOperand() << setw(jf) << x.getComment() << endl;
 
 	if (w.is_open()) {
-		w << std::left << setw(jf) << line_no << setw(jf) << dec_to_hex(address)
+		w << std::left << setw(jf) << line_no << setw(jf) << s.str()
 				<< setw(jf) << x.getLabel() << setw(jf)
 				<< plus + x.getMnemonic() << setw(jf) << x.getOperand()
 				<< setw(jf) << x.getComment() << endl;
