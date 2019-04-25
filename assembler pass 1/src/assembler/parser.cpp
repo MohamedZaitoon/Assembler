@@ -150,7 +150,6 @@ void parser::two_field(mnemonic_instruction* x, vector<string>& fields) {
 			} else {
 				one_field(x,fields[0]);
 				smatch sm;
-				cout<<"second field "<<fields[1]<<endl;
 				 if (regex_match(fields[1], sm, comment)) {
 					 x->setComment(sm[1].str());
 				} else if (regex_match(fields[1], sm, operand)) {
