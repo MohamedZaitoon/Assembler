@@ -72,18 +72,18 @@ void parser::valid_syntax(mnemonic_instruction& x){
 		x.setError("label must begin with alphabetic character, "+x.getError());
 	}
 	//operand
-	string op = x.getMnemonic();
+	string op = to_upper(x.getMnemonic());
 	auto it = optab.find(op);
 	if(it != optab.end()){
 		if(!x.getOperand().empty()){
 			smatch sm;
 			if(regex_match(x.getOperand(),sm,operand)){
 				 string perfix = sm[1].str();
-				 string first = sm[2].str();
+				 string first = to_upper(sm[2].str());
 				 string comma = sm[3].str();
-				 string second = sm[4].str();
+				 string second = to_upper(sm[4].str());
 				 int oprs = it->second.operands;
-				 if((perfix == "#" || perfix == "@")&&!comma.empty()&&!second.empty()){
+				 if((!perfix.compare("#") || !perfix.compare("@"))&&!comma.empty()&&!second.empty()){
 					 x.setError(x.getError()+", illegal addressing mode");
 				 }else if(perfix == "*"&& !first.empty()){
 					 x.setError(x.getError()+", extra characters at end of statement");
@@ -117,11 +117,11 @@ void parser::one_field(mnemonic_instruction* x, string field) {
 		if (groups.size() == 2) {
 			x->setFormate4(true);
 			string op = groups[1];
-			check_mnemonic(x, op);
+			//check_mnemonic(x, to_upper(op));
 			x->setMnemonic(op);
 		} else if (groups.size() == 1) {
 			string op = groups[0];
-			check_mnemonic(x, op);
+			//check_mnemonic(x, to_upper(op));
 			x->setMnemonic(op);
 		} else {
 			x->setError(x->getError()+", Invalid instruction syntax");
@@ -135,7 +135,7 @@ void parser::two_field(mnemonic_instruction* x, vector<string>& fields) {
 		vector<string> v = get_groups(m);
 		if (v.size() == 2) { //absolutely  opcde format 4
 			x->setFormate4(true);
-			check_mnemonic(x, v[1]);
+			//check_mnemonic(x, to_upper(v[1]));
 			x->setMnemonic(v[1]);
 			smatch sm;
 			if (regex_match(fields[1], sm, comment)) {
@@ -144,7 +144,7 @@ void parser::two_field(mnemonic_instruction* x, vector<string>& fields) {
 				x->setOperand(sm.str());
 			}
 		} else if (v.size() == 1) { // either label or opcode
-			if (optab.find(v[0]) == optab.end()) { //case first field label
+			if (optab.find(to_upper(v[0])) == optab.end()) { //case first field label
 				x->setLabel(v[0]);
 				one_field(x,fields[1]);
 			} else {
@@ -304,7 +304,6 @@ void parser::load_optab() {
 
 void parser::add(string name, info i) {
 	this->optab.insert(make_pair(name, i));
-	//pair<string,info> p = make_pair(name,i);
 }
 
 info parser::make_info(unsigned int f, string s, unsigned int opr) {

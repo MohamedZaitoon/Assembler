@@ -4066,3 +4066,209 @@ c:\mingw\include\c++\8.2.0\bits\stl_map.h:892:2: note:   template argument deduc
 ..\src\assembler\parser.cpp:294:27: note:   deduced conflicting types for parameter '_InputIterator' ('std::__cxx11::basic_string<char>' and 'info')
   this->optab.insert(name,i);
                            ^
+15:41:34 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler\\parser.o" "..\\src\\assembler\\parser.cpp" 
+..\src\assembler\parser.cpp: In member function 'std::vector<std::__cxx11::basic_string<char> > parser::get_groups(std::__cxx11::smatch)':
+..\src\assembler\parser.cpp:183:20: warning: comparison of integer expressions of different signedness: 'int' and 'std::__cxx11::match_results<__gnu_cxx::__normal_iterator<const char*, std::__cxx11::basic_string<char> > >::size_type' {aka 'long long unsigned int'} [-Wsign-compare]
+  for (int i = 1; i < m.size(); i++) {
+                  ~~^~~~~~~~~~
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler\\assembler.o" "..\\src\\assembler\\assembler.cpp" 
+..\src\assembler\assembler.cpp: In function 'std::__cxx11::string pass1(std::__cxx11::string)':
+..\src\assembler\assembler.cpp:174:10: warning: unused variable 'l' [-Wunused-variable]
+      int l = 0;
+          ^
+..\src\assembler\assembler.cpp:107:8: warning: variable 'foundError' set but not used [-Wunused-but-set-variable]
+   bool foundError = false;
+        ^~~~~~~~~~
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+16:00:16 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler\\parser.o" "..\\src\\assembler\\parser.cpp" 
+..\src\assembler\parser.cpp: In member function 'std::vector<std::__cxx11::basic_string<char> > parser::get_groups(std::__cxx11::smatch)':
+..\src\assembler\parser.cpp:183:20: warning: comparison of integer expressions of different signedness: 'int' and 'std::__cxx11::match_results<__gnu_cxx::__normal_iterator<const char*, std::__cxx11::basic_string<char> > >::size_type' {aka 'long long unsigned int'} [-Wsign-compare]
+  for (int i = 1; i < m.size(); i++) {
+                  ~~^~~~~~~~~~
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+..\src\assembler pass 1.cpp: In function 'int main()':
+..\src\assembler pass 1.cpp:49:16: warning: comparison with string literal results in unspecified behavior [-Waddress]
+  cout<<("X" == "X")<<endl;
+                ^~~
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler\\assembler.o" "..\\src\\assembler\\assembler.cpp" 
+..\src\assembler\assembler.cpp: In function 'std::__cxx11::string pass1(std::__cxx11::string)':
+..\src\assembler\assembler.cpp:174:10: warning: unused variable 'l' [-Wunused-variable]
+      int l = 0;
+          ^
+..\src\assembler\assembler.cpp:107:8: warning: variable 'foundError' set but not used [-Wunused-but-set-variable]
+   bool foundError = false;
+        ^~~~~~~~~~
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+16:01:28 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+16:01:41 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+16:01:54 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+16:02:04 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+..\src\assembler pass 1.cpp: In function 'int main()':
+..\src\assembler pass 1.cpp:49:16: warning: comparison with string literal results in unspecified behavior [-Waddress]
+  cout<<("X" == "X  ")<<endl;
+                ^~~~~
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+16:02:28 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+16:03:51 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+..\src\assembler pass 1.cpp: In function 'int main()':
+..\src\assembler pass 1.cpp:49:15: warning: comparison with string literal results in unspecified behavior [-Waddress]
+  cout<<("X" =="X  ")<<endl;
+               ^~~~~
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+16:07:59 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+16:08:19 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+16:08:37 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+Info: Nothing to build for assembler pass 1
+16:09:58 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+Info: Nothing to build for assembler pass 1
+Info: Nothing to build for assembler pass 1
+Info: Nothing to build for assembler pass 1
+16:11:12 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+16:11:32 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+16:11:53 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+16:12:19 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+17:00:55 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler\\parser.o" "..\\src\\assembler\\parser.cpp" 
+..\src\assembler\parser.cpp: In member function 'std::vector<std::__cxx11::basic_string<char> > parser::get_groups(std::__cxx11::smatch)':
+..\src\assembler\parser.cpp:183:20: warning: comparison of integer expressions of different signedness: 'int' and 'std::__cxx11::match_results<__gnu_cxx::__normal_iterator<const char*, std::__cxx11::basic_string<char> > >::size_type' {aka 'long long unsigned int'} [-Wsign-compare]
+  for (int i = 1; i < m.size(); i++) {
+                  ~~^~~~~~~~~~
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler\\assembler.o" "..\\src\\assembler\\assembler.cpp" 
+..\src\assembler\assembler.cpp: In function 'std::__cxx11::string pass1(std::__cxx11::string)':
+..\src\assembler\assembler.cpp:171:9: warning: unused variable 'l' [-Wunused-variable]
+      ll l = locctr;
+         ^
+..\src\assembler\assembler.cpp:121:8: warning: variable 'foundError' set but not used [-Wunused-but-set-variable]
+   bool foundError = false;
+        ^~~~~~~~~~
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+17:02:45 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+17:04:25 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+..\src\assembler pass 1.cpp: In function 'void run()':
+..\src\assembler pass 1.cpp:14:9: warning: format '%s' expects argument of type 'char*', but argument 2 has type 'std::__cxx11::string' {aka 'std::__cxx11::basic_string<char>'} [-Wformat=]
+   scanf("%s",s);
+         ^~~~
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+17:04:41 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+..\src\assembler pass 1.cpp: In function 'void run()':
+..\src\assembler pass 1.cpp:14:9: warning: format '%s' expects argument of type 'char*', but argument 2 has type 'std::__cxx11::string*' {aka 'std::__cxx11::basic_string<char>*'} [-Wformat=]
+   scanf("%s",&s);
+         ^~~~ ~~
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+17:07:24 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+17:07:39 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+17:08:54 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+17:09:14 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+17:09:22 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+Info: Nothing to build for assembler pass 1
+17:14:02 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+Info: Nothing to build for assembler pass 1
+17:16:21 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\assembler pass 1.o" "..\\src\\assembler pass 1.cpp" 
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+17:16:33 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+c:/mingw/bin/../lib/gcc/x86_64-w64-mingw32/8.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot open output file assembler pass 1.exe: Permission denied
+collect2.exe: error: ld returned 1 exit status
+17:16:48 **** Incremental Build of configuration Debug for project assembler pass 1 ****
+Info: Internal Builder is used for build
+g++ -o "assembler pass 1.exe" "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\assembler pass 1.o" 
+Info: Nothing to build for assembler pass 1
+Info: Nothing to build for assembler pass 1
