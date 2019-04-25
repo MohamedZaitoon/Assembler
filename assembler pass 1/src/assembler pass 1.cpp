@@ -6,6 +6,8 @@
 #include <vector>
 #include <iomanip>
 #include <stdio.h>
+#include <fstream>
+
 using namespace std;
 regex r("^\\s*pass1\\s+([\\s\\S]+)$");
 void run(){
@@ -24,6 +26,14 @@ void run(){
 int main() {
 	//run();
 	pass1("T_F.txt");
+//	int jf = 20;
+//	ofstream write;
+//	write.open("LISTFILE.txt", ios::trunc);
+//	write<<"asdiuhaufuia"<<endl;
+//	write << std::left << setw(jf) << "line no." << setw(jf) << "address"
+//					<< setw(jf) << "label" << setw(jf) << "op-code" << setw(jf)
+//					<< "operand" << setw(jf) << "comment"<<endl;
+//	write.close();
 	cout<<"Exit";
 	return 0;
 }

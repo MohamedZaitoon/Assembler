@@ -1,0 +1,4 @@
+                                                                 pass1
+line no.            address             label               op-code             operand             comment             
+                                        .234567890123456789 
+1                   0                   LAB2C               START                                                       

@@ -85,43 +85,62 @@ string read_file(string path) {
 	}
 }
 
-void write_pass1_output(string line) {
-	ofstream write;
-//	write.open(pass1_path, ios::trunc);
-	if (write.is_open()) {
-//			for (string s : code_lines) {
-//				cout << s << endl;
-//				write << s << endl;
-//			}
-		write.close();
-	}
-}
 void writeListFile(ofstream& w, int line_no, long long address,
 		mnemonic_instruction& x) {
 	string plus = "";
 	if (x.isFormate4())
 		plus = "+";
-	w << std::left << setw(jf) << line_no << setw(jf) << dec_to_hex(address)
+
+	stringstream s;
+	s<<setfill('0')<<setw(6)<<dec_to_hex(address);
+
+	cout << std::left << setw(jf) << line_no <<setw(jf)<< s.str()
 			<< setw(jf) << x.getLabel() << setw(jf) << plus + x.getMnemonic()
 			<< setw(jf) << x.getOperand() << setw(jf) << x.getComment() << endl;
+
+	if (w.is_open()) {
+		w << std::left << setw(jf) << line_no << setw(jf) << dec_to_hex(address)
+				<< setw(jf) << x.getLabel() << setw(jf)
+				<< plus + x.getMnemonic() << setw(jf) << x.getOperand()
+				<< setw(jf) << x.getComment() << endl;
+	}
 }
 void writeCommentLine(ofstream& w, int line_no, long long address,
 		mnemonic_instruction& x) {
-	w << std::left << setw(jf) << line_no << setw(jf) << dec_to_hex(address)
+
+	cout << std::left << setw(jf) << line_no << setw(jf) << dec_to_hex(address)
 			<< setw(jf) << x.getComment() << endl;
+
+	if (w.is_open())
+		w << std::left << setw(jf) << line_no << setw(jf) << dec_to_hex(address)
+				<< setw(jf) << x.getComment() << endl;
 }
+
 void writeError(ofstream& w, string error) {
-	w << "***Error: " << error << endl;
+
+	cout << "***Error: " << error << endl;
+
+	if (w.is_open())
+		w << "***Error: " << error << endl;
 }
+
 string pass1(string path) {
-	read_file(path);
+	cout << "reading file :" + path <<": " +read_file(path) << endl;
 	ofstream write;
 	write.open("LISTFILE.txt", ios::trunc);
 	if (write.is_open()) {
 		bool foundError = false;
+		int lineno = 0;
+
+		cout << std::left <<setw(jf) << "pass1" << endl;
+		cout << std::left << setw(jf) << "line no." << setw(jf) << "address"
+				<< setw(jf) << "label" << setw(jf) << "op-code" << setw(jf)
+				<< "operand" << setw(jf) << "comment" << endl;
+
+		write << setw(3*jf+10) << "pass1" << endl;
 		write << std::left << setw(jf) << "line no." << setw(jf) << "address"
 				<< setw(jf) << "label" << setw(jf) << "op-code" << setw(jf)
-				<< "operand" << setw(jf) << "comment";
+				<< "operand" << setw(jf) << "comment" << endl;
 		if (!code_lines.empty()) {
 			int siz = code_lines.size();
 			parser p;
@@ -131,13 +150,13 @@ string pass1(string path) {
 				regex r("^[\\da-fA-F]+&");
 				if (regex_match(ins.getOperand(), r)) {
 					locctr = hex_to_dec(ins.getOperand());
-					writeListFile(write, 1, locctr, ins);
+					writeListFile(write, ++lineno, locctr, ins);
 				} else {
 					writeError(write, "invalid operand");
 					foundError = true;
 				}
 			} else if (ins.is_comment()) {
-				write << ins.getComment() << endl;
+				write <<std::left<< setw(jf)<<""<<setw(jf)<<""<<setw(jf)<<ins.getComment() << endl;
 				locctr = 0;
 			} else {
 				locctr = 0;
@@ -196,12 +215,13 @@ string pass1(string path) {
 							foundError = true;
 						}
 					}
-					writeListFile(write, i + 1, locctr, ins);
-					if (ins.has_error()|| !error.empty())
-						writeError(write, ins.getError()+", "+error);
+					writeListFile(write, ++lineno, l, ins);
+					if (ins.has_error() || !error.empty())
+						writeError(write, ins.getError() + ", " + error);
 				} //end if not a comment
-				else{
-					write<<setw(jf)<<""<<setw(jf)<<ins.getComment()<<endl;
+				else {
+					write << setw(jf) << "" << setw(jf) << ins.getComment()
+							<< endl;
 				}
 
 			}
@@ -209,10 +229,12 @@ string pass1(string path) {
 			//save locctr - starting adrs as prog len
 			len = locctr - startaddrs;
 		} else {
+			write.close();
 			return "Can't assemble this file";
 		}
 	}
 	write.close();
+
 	return "done";
 }
 
