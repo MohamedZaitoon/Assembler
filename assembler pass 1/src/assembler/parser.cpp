@@ -7,22 +7,25 @@
 using namespace std;
 typedef mnemonic_instruction instruct;
 
-const regex comment("^\\s*[\\.][\\s\\S]*");
+const regex comment("^\\s*[\\.]([\\s\\S]*)");
 
-const regex opcode("([+])?([\\S]+)");
+const regex opcode("^\\s*([+])?([\\S]+)\\s*$");
 
-const regex operand("^([#*@])?\\s*(\\w+)\\s*([,])?\\s*(\\w+)?$");
+const regex operand("^([#*@])?\\s*(\\S+)\\s*([,])?\\s*(\\S+)?$");
 
-const regex label("^\\s*(\\w+)$\\s");
+const regex litral("^[=]\\s*([cCxX])\\s*['](\\w+)[']\\s*$");
+
+const regex label("(^[a-zA-Z][\\w]+)$");
 
 const regex instruction("^\\s*(?:(\\S+)?\\s+)?"
 		"(\\s*[+]?[\\w]+)\\s*"
-		"(?:\\s+([#@,\\w\\s]+)?\\s*)?"
-		"(?:\\s+\\.([\\s\\S]+)?)?$");
+		"(?:\\s+([=#*@,'\\w\\s]+)?\\s*)?"
+		"(?:\\s+(\\.[\\s\\S]+)?)?$");
 
-map<string, info> optab;
 parser::parser() {
 	load_optab();
+	load_register_tab();
+	load_derictve();
 }
 
 parser::~parser() {
@@ -34,56 +37,163 @@ instruct parser::parse(string ins) {
 	if (regex_match(ins, result, comment)) {
 		x.setComment(*result.begin());
 		return x;
-	} else {
-		if (regex_search(ins, result, instruction)) {
-			smatch groups;
-			cout<<result.size()<<endl;
-			if (result.size() == 5) {
-				one_field(&x, result[1]);
-			} else if (result.size() == 2) {
-				two_field(&x, result);
-			} else if (result.size() == 3) {
-
-			} else if (result.size() == 4) {
-
-			}
-
-
-		} else {
-			x.setError("Invalid instruction syntax");
-			return x;
-
+	} else if (regex_search(ins, result, instruction)) {
+		if (result.empty())
+			goto invalid;
+		vector<string> v = get_groups(result);
+		switch (v.size()) {
+		case 1:
+			one_field(&x, v[0]);
+			break;
+		case 2:
+			two_field(&x, v);
+			break;
+		case 3:
+			three_field(&x, v);
+			break;
+		case 4:
+			four_field(&x, v);
+			break;
+		default:
+			goto invalid;
 		}
+		valid_syntax(x);
+
+	} else {
+		invalid: x.setError("Invalid instruction syntax");
+		return x;
 	}
 	return x;
 }
-
-void parser::one_field(mnemonic_instruction* x, string field) {
-	smatch groups;
-	if (regex_search(field, groups, opcode)) {
-		if (groups.size() == 2) {
-			x->setFormate4(true);
-			string op = groups[1].str();
-			check_mnemonic(x, op, 0);
-			x->setMnemonic(field);
-
-		} else if (groups.size() == 1) {
-			string op = *groups.begin();
-			check_mnemonic(x, op, 0);
-			x->setMnemonic(op);
-
-		} else {
-			x->setError("Invalid instruction syntax");
+void parser::valid_syntax(mnemonic_instruction& x){
+	//label must begin with character
+	if(x.has_label()&& !regex_match(x.getLabel(),label)){
+		x.setError("label must begin with alphabetic character, "+x.getError());
+	}
+	//operand
+	string op = x.getMnemonic();
+	auto it = optab.find(op);
+	if(it != optab.end()){
+		if(!x.getOperand().empty()){
+			smatch sm;
+			if(regex_match(x.getOperand(),sm,operand)){
+				 string perfix = sm[1].str();
+				 string first = sm[2].str();
+				 string comma = sm[3].str();
+				 string second = sm[4].str();
+				 int oprs = it->second.operands;
+				 if((perfix == "#" || perfix == "@")&&!comma.empty()&&!second.empty()){
+					 x.setError(x.getError()+", illegal addressing mode");
+				 }else if(perfix == "*"&& !first.empty()){
+					 x.setError(x.getError()+", extra characters at end of statement");
+				 }else if(comma.empty() && !second.empty()){
+					 x.setError(x.getError()+", the must be comma ',' between two operands");
+				 }else if(oprs == 2){
+					 if(second.empty()){
+						 x.setError(x.getError()+", second register is missed");
+					 }else if (register_tab.find(first) == register_tab.end() ||
+							 register_tab.find(second) == register_tab.end()){
+						 x.setError(x.getError()+", operand must be a register");
+					 }
+				 }else if(!second.empty() && "X" != to_upper(second)){
+					 x.setError(x.getError()+", operand must be a register X not a "+second);
+				 }
+			}else if(regex_match(x.getOperand(),sm,litral)){
+				 //handle litral
+			}else{
+				x.setError(x.getError()+", invalid operand");
+			}
 		}
-
+	}else {
+		// handle derictrive
 	}
 }
 
-void parser::two_field(mnemonic_instruction* x, smatch field) {
-
+void parser::one_field(mnemonic_instruction* x, string field) {
+	smatch m;
+	if (regex_search(field, m, opcode)) {
+		vector<string> groups = get_groups(m);
+		if (groups.size() == 2) {
+			x->setFormate4(true);
+			string op = groups[1];
+			check_mnemonic(x, op);
+			x->setMnemonic(op);
+		} else if (groups.size() == 1) {
+			string op = groups[0];
+			check_mnemonic(x, op);
+			x->setMnemonic(op);
+		} else {
+			x->setError(x->getError()+", Invalid instruction syntax");
+		}
+	}
 }
 
-void parser::check_mnemonic(mnemonic_instruction*x, string op, int noOperand) {
+void parser::two_field(mnemonic_instruction* x, vector<string>& fields) {
+	smatch m;
+	if (regex_match(fields[0], m, opcode)) { // either label or opcode
+		vector<string> v = get_groups(m);
+		if (v.size() == 2) { //absolutely  opcde format 4
+			x->setFormate4(true);
+			check_mnemonic(x, v[1]);
+			x->setMnemonic(v[1]);
+			smatch sm;
+			if (regex_match(fields[1], sm, comment)) {
+				x->setComment(sm[1].str());
+			} else if (regex_match(v[1], sm, operand)) {
+				x->setOperand(sm.str());
+			}
+		} else if (v.size() == 1) { // either label or opcode
+			if (optab.find(v[0]) == optab.end()) { //case first field label
+				x->setLabel(v[0]);
+				one_field(x,fields[1]);
+			} else {
+				one_field(x,fields[0]);
+				smatch sm;
+				 if (regex_match(v[1], sm, comment)) {
+					 x->setComment(sm[1].str());
+				} else if (regex_match(v[1], sm, operand)) {
+					x->setOperand(sm.str());
+				}
+			}
+		}
+	}
+
+}
+void parser::three_field(mnemonic_instruction* x, vector<string>& fields) {
+	vector<string> y(2);
+	y[0] = fields[0];
+	y[1] = fields[1];
+	two_field(x,y);
+	smatch sm;
+	if(regex_match(fields[2],sm,comment)){
+		x->setComment(sm.str());
+	}else {
+		x->setError(x->getError()+", "+"syntax error");
+	}
+}
+void parser::four_field(mnemonic_instruction* x, vector<string>& fields) {
+	x->setLabel(fields[0]);
+	one_field(x,fields[1]);
+	x->setOperand(fields[2]);
+	x->setComment(fields[3]);
+}
+vector<string> parser::get_groups(smatch m) {
+	vector<string> v;
+	for (int i = 1; i < m.size(); i++) {
+		string re = m[i].str();
+		if (!re.empty()) {
+			v.push_back(re);
+		}
+	}
+	return v;
+}
+/**
+ * check that:
+ * 		is op in optab
+ * 		format 2 does not come with format 4
+ *
+ */
+void parser::check_mnemonic(mnemonic_instruction*x, string op) {
 	auto entry = optab.find(op);
 	if (entry == optab.end()) {
 		x->setError("this is invalid mnemonic instruction");
@@ -91,11 +201,25 @@ void parser::check_mnemonic(mnemonic_instruction*x, string op, int noOperand) {
 		info t = entry->second;
 		if (x->isFormate4() && t.formate == 2) {
 			x->setError(op + " must be format 2");
-			x->setFormate4(false);
-		} else if (t.operands != noOperand) {
-			x->setError(op + " must have " + to_string(t.operands) + "operands");
 		}
 	}
+}
+
+void parser::load_derictve(){
+
+
+}
+
+void parser::load_register_tab(){
+	register_tab.insert(make_pair("A",0));
+	register_tab.insert(make_pair("X",1));
+	register_tab.insert(make_pair("L",2));
+	register_tab.insert(make_pair("B",3));
+	register_tab.insert(make_pair("S",4));
+	register_tab.insert(make_pair("T",5));
+	register_tab.insert(make_pair("F",6));
+	register_tab.insert(make_pair("PC",8));
+	register_tab.insert(make_pair("SW",9));
 }
 
 void parser::load_optab() {
@@ -159,10 +283,15 @@ void parser::load_optab() {
 	add("HIO", make_info(1, "F4", 0));
 	add("FLOAT", make_info(1, "C0", 0));
 	add("FIX", make_info(1, "C4", 0));
+
+	//derictive
+	add("FIX", make_info(1, "C4", 0));
+
 }
 
 void parser::add(string name, info i) {
 	this->optab.insert(make_pair(name, i));
+	pair<string,info> = make_pair(name,i);
 }
 
 info parser::make_info(unsigned int f, string s, unsigned int opr) {

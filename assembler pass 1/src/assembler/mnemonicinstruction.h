@@ -16,6 +16,7 @@ class mnemonic_instruction {
 	string comment;
 	string error;
 	bool formate4;
+
 public:
 	mnemonic_instruction(string label,string mnemonic,string operand,string comment);
 	mnemonic_instruction();
@@ -24,7 +25,6 @@ public:
 	bool is_comment();
 	bool has_label();
 	bool has_error();
-
 
 	const string& getComment() const {
 		return comment;
