@@ -63,7 +63,7 @@ map<string, symbol> symtab;
 ll locctr;
 ll startaddrs;
 ll len;
-const int jf = 20;
+const int jf = 10;
 
 string to_upper(string s) {
 	transform(s.begin(), s.end(), s.begin(), ::toupper);

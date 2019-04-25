@@ -24,8 +24,8 @@ void run(){
 	}
 }
 int main() {
-	//run();
-	pass1("T_F.txt");
+	run();
+	//pass1("T_F.txt");
 //	int jf = 20;
 //	ofstream write;
 //	write.open("LISTFILE.txt", ios::trunc);
