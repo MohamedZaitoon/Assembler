@@ -9,6 +9,7 @@
 #include <sstream>
 #include <map>
 #include <iomanip>
+#define ll long long
 
 using namespace std;
 template<typename T>
@@ -27,12 +28,19 @@ string dec_to_hex(T d) {
 	return ss.str();
 }
 typedef mnemonic_instruction instruct;
+struct symbol{
+	const bool byte = false;
+	const bool word = true;
+	ll address;
+	int length;
+	bool type;
+};
 
 vector<string> code_lines;
 
 map<string, string> symtab;
 
-long long locctr;
+ll locctr;
 const int jf = 20;
 
 string to_upper(string s) {
@@ -67,8 +75,10 @@ void write_pass1_output(string line) {
 	}
 }
 void writeListFile(ofstream& w,int line_no,long long address,mnemonic_instruction& x){
+	string plus = "";
+	if(x.isFormate4()) plus = "+";
 	w<<std::left<<setw(jf)<<line_no<<setw(jf)<<dec_to_hex(address)<<
-					setw(jf)<<x.getLabel()<<setw(jf)<<x.getMnemonic()<<setw(jf)<<x.getOperand()<<setw(jf)<<x.getComment()<<endl;
+					setw(jf)<<x.getLabel()<<setw(jf)<<plus+x.getMnemonic()<<setw(jf)<<x.getOperand()<<setw(jf)<<x.getComment()<<endl;
 }
 void writeCommentLine(ofstream& w,int line_no,long long address,mnemonic_instruction& x){
 	w<<std::left<<setw(jf)<<line_no<<setw(jf)<<dec_to_hex(address)<<
@@ -105,22 +115,38 @@ string pass1(string path) {
 			}
 			for (int i = 1; i < siz; i++) {
 				ins = p.parse(code_lines[i]);
+				string error="";
 				if (ins.has_error()) {
-					//handel when there is an error
-					continue;
+
+					/*auto it = p.optab.find(ins.getMnemonic());
+					if(it != p.optab.end()){
+						info inf = it->second;
+						if(inf.formate == 2){
+							locctr+=2;
+						}else if(inf.formate == 3){
+							locctr +=3+ins.isFormate4();
+						}
+					}else{
+						it = p.derctivetab.find(ins.getOperand());
+						if()
+					}*/
+					//continue;
 				}
 				op = to_upper(ins.getMnemonic());
 				if (op == "END") {
+					writeListFile(write,i+1,locctr,ins);
+					if(ins.has_error())writeError(write,ins.getError());
 					break;
 				} // handel when the end of operation
 				if (!ins.is_comment()) {
 					if (ins.has_label()) {
 						//search in symbol table for error
-						bool founed;
-						if (founed) {
-
+						auto it = symtab.find(ins.getLabel());
+						if (it != symtab.end()) {
+							error +="Symbol '"+ins.getLabel()+"' is already defined";
 						} else {
-							//add to smbol table (label , locctr)
+							//add to smbol table (label , locct)
+							symtab.insert(make);
 						}
 					}
 					// search for length of formate to add to locctr
@@ -136,7 +162,8 @@ string pass1(string path) {
 					} else {
 					} //error invalid operation code
 				} //end if not a comment
-				  //write line to intermediate file
+					writeListFile(write,i+1,locctr,ins);
+					if(ins.has_error())writeError(write,ins.getError());
 			}
 			//write last line in intermediate file
 			//save locctr - starting adrs as prog len

@@ -1,0 +1,22 @@
+#ifndef ASSEMBLER_PARSER_H_
+#define ASSEMBLER_PARSER_H_
+#include "mnemonicinstruction.h"
+#include <string>
+#include <map>
+class info{
+
+};
+class parser {
+
+public:
+	map<string, info> optab;
+	parser();
+	virtual ~parser();
+	mnemonic_instruction parse(string ins);
+private:
+	void load_optab();
+	void add(string name, info i);
+	info make_info(unsigned int f, string s,unsigned int opr);
+};
+
+#endif /* ASSEMBLER_PARSER_H_ */

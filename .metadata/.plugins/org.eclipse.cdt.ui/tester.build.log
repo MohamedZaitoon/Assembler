@@ -1,0 +1,8 @@
+02:29:30 **** Incremental Build of configuration Debug for project tester ****
+Info: Internal Builder is used for build
+g++ -o tester.exe "src\\assembler\\assembler.o" "src\\assembler\\mnemonicinstruction.o" "src\\assembler\\parser.o" "src\\tester.o" 
+src\assembler\parser.o:parser.cpp:(.rdata$.refptr._ZN6parser5optabB5cxx11E[.refptr._ZN6parser5optabB5cxx11E]+0x0): undefined reference to `parser::optab[abi:cxx11]'
+collect2.exe: error: ld returned 1 exit status
+
+02:29:31 Build Finished. 0 errors, 0 warnings. (took 1s.436ms)
+

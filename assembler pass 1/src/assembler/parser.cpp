@@ -4,6 +4,7 @@
 #include <iostream>
 #include <regex>
 #include "assembler.h"
+#include <utility>
 using namespace std;
 typedef mnemonic_instruction instruct;
 
@@ -206,7 +207,21 @@ void parser::check_mnemonic(mnemonic_instruction*x, string op) {
 }
 
 void parser::load_derictve(){
-
+	this->derctivetab.insert(make_pair("START",make_info(0,"",1)));
+	this->derctivetab.insert(make_pair("END",make_info(0,"",0)));
+	this->derctivetab.insert(make_pair("BYTE",make_info(0,"",1)));
+	this->derctivetab.insert(make_pair("WORD",make_info(0,"",1)));
+	this->derctivetab.insert(make_pair("RESB",make_info(0,"",1)));
+	this->derctivetab.insert(make_pair("RESW",make_info(0,"",1)));
+	this->derctivetab.insert(make_pair("BASE",make_info(0,"",1)));
+	this->derctivetab.insert(make_pair("NOBASE",make_info(0,"",0)));
+	this->derctivetab.insert(make_pair("EXTDEF",make_info(0,"",1)));
+	this->derctivetab.insert(make_pair("EXTREF",make_info(0,"",1)));
+	this->derctivetab.insert(make_pair("EQU",make_info(0,"",1)));
+	this->derctivetab.insert(make_pair("USE",make_info(0,"",1)));
+	this->derctivetab.insert(make_pair("CSECT",make_info(0,"",1)));
+	this->derctivetab.insert(make_pair("ORG",make_info(0,"",1)));
+	this->derctivetab.insert(make_pair("LTORG",make_info(0,"",0)));
 
 }
 
@@ -284,14 +299,12 @@ void parser::load_optab() {
 	add("FLOAT", make_info(1, "C0", 0));
 	add("FIX", make_info(1, "C4", 0));
 
-	//derictive
-	add("FIX", make_info(1, "C4", 0));
 
 }
 
 void parser::add(string name, info i) {
 	this->optab.insert(make_pair(name, i));
-	pair<string,info> = make_pair(name,i);
+	//pair<string,info> p = make_pair(name,i);
 }
 
 info parser::make_info(unsigned int f, string s, unsigned int opr) {

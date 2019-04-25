@@ -1,0 +1,78 @@
+#ifndef ASSEMBLER_MNEMONICINSTRUCTION_H_
+#define ASSEMBLER_MNEMONICINSTRUCTION_H_
+#include <string>
+using namespace std;
+class mnemonic_instruction {
+	//length of fields
+	const static int LENLABEL = 7;
+	const static int LENMNEMONIC = 6;
+	const static int LENOPERAND = 18;
+	const static int LENCOMMENT = 30;
+
+	private:
+	string label;
+	string mnemonic;
+	string operand;
+	string comment;
+	string error;
+	bool formate4;
+public:
+	mnemonic_instruction(string label,string mnemonic,string operand,string comment);
+	mnemonic_instruction();
+	virtual ~mnemonic_instruction();
+
+	bool is_comment();
+	bool has_label();
+	bool has_error();
+
+
+	const string& getComment() const {
+		return comment;
+	}
+
+	void setComment(const string& comment) {
+		this->comment = comment;
+	}
+
+	const string& getError() const {
+		return error;
+	}
+
+	void setError(const string& error) {
+		this->error = error;
+	}
+
+	bool isFormate4() const {
+		return formate4;
+	}
+
+	void setFormate4(bool formate4) {
+		this->formate4 = formate4;
+	}
+
+	const string& getLabel() const {
+		return label;
+	}
+
+	void setLabel(const string& label) {
+		this->label = label;
+	}
+
+	const string& getMnemonic() const {
+		return mnemonic;
+	}
+
+	void setMnemonic(const string& mnemonic) {
+		this->mnemonic = mnemonic;
+	}
+
+	const string& getOperand() const {
+		return operand;
+	}
+
+	void setOperand(const string& operand) {
+		this->operand = operand;
+	}
+};
+
+#endif

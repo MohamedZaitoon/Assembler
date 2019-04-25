@@ -1,0 +1,20 @@
+02:26:34 **** Rebuild of configuration Debug for project pass 1 ****
+Info: Internal Builder is used for build
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\src\\assembler pass 1.o" "..\\src\\src\\assembler pass 1.cpp" 
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\pass 1.o" "..\\src\\pass 1.cpp" 
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\src\\assembler\\mnemonicinstruction.o" "..\\src\\src\\assembler\\mnemonicinstruction.cpp" 
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\src\\assembler\\parser.o" "..\\src\\src\\assembler\\parser.cpp" 
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -o "src\\src\\assembler\\assembler.o" "..\\src\\src\\assembler\\assembler.cpp" 
+..\src\src\assembler\assembler.cpp: In function 'std::__cxx11::string pass1(std::__cxx11::string)':
+..\src\src\assembler\assembler.cpp:88:9: warning: unused variable 'l' [-Wunused-variable]
+     int l = 0;
+         ^
+g++ -o "pass 1.exe" "src\\pass 1.o" "src\\src\\assembler\\assembler.o" "src\\src\\assembler\\mnemonicinstruction.o" "src\\src\\assembler\\parser.o" "src\\src\\assembler pass 1.o" 
+src\src\assembler pass 1.o: In function `main':
+C:\Users\MohamedSamir\eclipse-workspace\pass 1\Debug/../src/src/assembler pass 1.cpp:20: multiple definition of `main'
+src\pass 1.o:C:\Users\MohamedSamir\eclipse-workspace\pass 1\Debug/../src/pass 1.cpp:12: first defined here
+src\src\assembler\parser.o:parser.cpp:(.rdata$.refptr._ZN6parser5optabB5cxx11E[.refptr._ZN6parser5optabB5cxx11E]+0x0): undefined reference to `parser::optab[abi:cxx11]'
+collect2.exe: error: ld returned 1 exit status
+
+02:26:39 Build Failed. 2 errors, 1 warnings. (took 5s.47ms)
+
