@@ -9,7 +9,7 @@
 
 	const regex ropcode("^\\s*([+])?([\\S]+)\\s*$");
 
-	const regex roperand("^([#*@=])?\\s*([\\w]+)\\s*([,])?\\s*(\\S+)?$");
+	const regex roperand("^([#@=*])?\\s*([\\w]+)\\s*([,])?\\s*(\\S+)?$");
 
 	const regex rlitral("^[=]\\s*([cCxX])\\s*['](\\w+)[']\\s*$");
 
@@ -24,7 +24,7 @@
 
 	const regex r2operand("^\\s*([a-zA-Z][\\w]*|[\\d]+)\\s*[,]\\s*([a-zA-Z][\\w]*|[\\d]+)\\s*$");
 
-	const regex rimmd_ind("^\\s*[#@]\\s*([a-zA-Z][\\w]*|[\\d]+)\\s*$");
+	const regex rimmd_ind("^\\s*[#@]\\s*([a-zA-Z][\\w]*|[\\d]+|[*])\\s*$");
 
 	const regex rinstruction("^\\s*(?:(\\S+)?\\s+)?"
 			"(\\s*[+]?[\\w]+)\\s*"

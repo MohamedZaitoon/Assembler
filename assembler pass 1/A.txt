@@ -1,0 +1,14 @@
+.23456789012345678901234567890123456
+.Set ALPHA equal to the integer portion of BETA / GAMMA
+.Label.  Opcode  The  O p e r a n d 
+.
+         START   0
+         LDA     BETA
+         DIV     GAMMA
+         STA     ALPHA
+         J       *
+.
+ALPHA    RESW    1
+BETA     RESW    1
+GAMMA    RESW    1
+         END     

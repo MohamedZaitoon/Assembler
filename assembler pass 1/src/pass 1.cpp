@@ -15,11 +15,15 @@ void run(){
 		string s;
 		cout<<">>>";
 		getline(cin,s);
-		cout<<s<<endl;
+		//cout<<s<<endl;
 		smatch sm;
 		if(regex_match(s,sm,r)){
 			cout<<"file :"<<sm[1].str()<<endl;
-			cout<<pass1(sm[1].str())<<endl;
+			if(!sm[1].str().empty()){
+				cout<<pass1(sm[1].str())<<endl;
+			}else{
+				cout<<"Empty path"<<endl;
+			}
 		}else{
 			cout<<"Invalid command or path"<<endl;
 		}
@@ -28,7 +32,6 @@ void run(){
 
 int main() {
 	run();
-	//cout<<pass1("T_F.txt")<<endl;
 	cout<<"end pass1";
 	return 0;
 }

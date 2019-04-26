@@ -56,6 +56,8 @@ const int jf = 10;
 symbol temp(0, 0, 0, 0);
 
 string pass1(string path) {
+	symtab.clear();
+	useBase =false;
 	cout << "reading file :" + path << ": " + read_file(path) << endl;
 	ofstream write;
 	write.open("LISTFILE.txt", ios::trunc);
@@ -138,27 +140,30 @@ string pass1(string path) {
 						if (ins.has_label()) {
 							//search in symbol table for error
 							auto it = symtab.find(ins.getLabel());
-							if (it != symtab.end()) {
-								error += "Symbol '" + ins.getLabel()
-										+ "' is already defined";
-							} else { //******* handle symbol arguments
+							if (it == symtab.end()) {
+								//******* handle symbol arguments
 								//add to smbol table (label , locct)
 								symbol s(temp.address, temp.length, temp.type,
 										temp.addressType);
 								symtab.insert(make_pair(ins.getLabel(), s));
+
+							} else {
+								error += "Symbol '" + ins.getLabel()
+										+ "' is already defined";
 							}
 						}
 						writeListFile(write, ++lineno, l, ins);
-						if (ins.has_error() || !error.empty()){
+						if (ins.has_error() || !error.empty()) {
 							foundError = true;
 							writeError(write, ins.getError() + ", " + error);
 						}
 					} //end if not a comment
 					else {
 						stringstream s;
-							s << setfill('0') << setw(6) << dec_to_hex(locctr);
-							write  << std::left << setw(jf) << lineno << setw(jf) << s.str() << setw(jf)
-								<< ins.getComment() << endl;
+						s << setfill('0') << setw(6) << dec_to_hex(locctr);
+						write << std::left << setw(jf) << lineno << setw(jf)
+								<< s.str() << setw(jf) << ins.getComment()
+								<< endl;
 					}
 
 				}
@@ -178,7 +183,7 @@ string pass1(string path) {
 			write << "pass1 Failed" << endl;
 			return "Failed pass1";
 		}
-	}else{
+	} else {
 		return "Failed pass1";
 	}
 	printSymbolTab(write);
@@ -207,7 +212,7 @@ string read_file(string path) {
 }
 
 void handleDerictive(statement& ins, string op, parser& p, string& error) {
-	string oprnd = ins.getOperand();
+	string oprnd = trim(ins.getOperand());
 	if (!op.compare("START")) {
 		temp.address = locctr;
 		temp.length = 0;
@@ -373,6 +378,7 @@ void handleDerictive(statement& ins, string op, parser& p, string& error) {
 			else {
 				locctr = it->second.address;
 			}
+		} else if (oprnd.compare("*")) {
 		} else {
 			if (!ins.has_error())
 				error += "Invalid operand,";
@@ -393,7 +399,10 @@ void handleDerictive(statement& ins, string op, parser& p, string& error) {
 			error += "address expression is not relocatable, ";
 		} else if (p.assertRegex(oprnd, rlabel)) {
 			baseLabel = oprnd;
+		} else if (oprnd.compare("*")) {
+			baseLabel = "*";
 		} else {
+
 			if (!ins.has_error())
 				error += "Invalid operand,";
 		}
@@ -402,10 +411,10 @@ void handleDerictive(statement& ins, string op, parser& p, string& error) {
 		if (ins.has_label()) {
 			error += "this statement can not have a label, ";
 		}
-		if(!trim(oprnd).empty()){
+		if (!trim(oprnd).empty()) {
 			error += "this statement can not have an operand, ";
 		}
-	}else{
+	} else {
 
 	}
 
@@ -422,8 +431,8 @@ void writeListFile(ofstream& w, int line_no, ll address, statement& x) {
 	if (w.is_open()) {
 		w << std::left << setw(jf) << line_no << setw(jf) << s.str() << setw(jf)
 				<< x.getLabel() << setw(jf) << plus + x.getMnemonic()
-				<< setw(jf) << trim(x.getOperand()) << setw(jf) << x.getComment()
-				<< endl;
+				<< setw(jf) << trim(x.getOperand()) << setw(jf)
+				<< x.getComment() << endl;
 	}
 }
 
@@ -438,16 +447,21 @@ void wirteInitialLine(ofstream& write) {
 			<< "operand" << setw(jf) << "comment" << endl;
 }
 
-void printSymbolTab(ofstream& w){
-	if(symtab.empty()) return;
-	w<<std::left<<setw(jf*2)<<""<<setw(5)<<"Symbol Table (value in decimal)"<<endl<<endl;
-	w<<std::left<<setw(jf)<<""<<setw(jf)<<"Name"<<setw(jf)<<"Value"<<setw(jf)<<"Reloc/Absol"<<endl;
-	w<<std::left<<setw(jf)<<""<<setfill('-')<<setw(jf*3)<<endl;
-	w<<setfill(' ');
+void printSymbolTab(ofstream& w) {
+	if (symtab.empty())
+		return;
+	w << std::left << setw(jf * 2) << "" << setw(5)
+			<< "Symbol Table (value in decimal)" << endl << endl;
+	w << std::left << setw(jf) << "" << setw(jf) << "Name" << setw(jf)
+			<< "Value" << setw(jf) << "Reloc/Absol" << endl;
+	w << std::left << setw(jf) << "" << setfill('-') << setw(jf * 3) << endl;
+	w << setfill(' ');
 	string s;
-	for(auto entry : symtab){
-		s = ((entry.second.addressType == entry.second.absol)?"Absolute":"Relocatable");
-		w<<std::left<<setw(jf)<<""<<setw(jf)<<entry.first<<setw(jf)<<entry.second.address<<setw(jf)<<"Reloc/Absol"<<endl;
+	for (auto entry : symtab) {
+		s = ((entry.second.addressType == entry.second.absol) ?
+				"Absolute" : "Relocatable");
+		w << std::left << setw(jf) << "" << setw(jf) << entry.first << setw(jf)
+				<< entry.second.address << setw(jf) << s << endl;
 	}
 }
 
@@ -479,14 +493,14 @@ string to_string(int d) {
 	ss << d;
 	return ss.str();
 }
-string trim(const string& str){
+string trim(const string& str) {
 	const string whitespace = " \t";
-    const auto strBegin = str.find_first_not_of(whitespace);
-    if (strBegin == std::string::npos)
-        return ""; // no content
+	const auto strBegin = str.find_first_not_of(whitespace);
+	if (strBegin == std::string::npos)
+		return ""; // no content
 
-    const auto strEnd = str.find_last_not_of(whitespace);
-    const auto strRange = strEnd - strBegin + 1;
+	const auto strEnd = str.find_last_not_of(whitespace);
+	const auto strRange = strEnd - strBegin + 1;
 
-    return str.substr(strBegin, strRange);
+	return str.substr(strBegin, strRange);
 }

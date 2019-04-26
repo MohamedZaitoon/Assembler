@@ -165,7 +165,7 @@ void parser::valid_syntax(statement& x) {
 										+ " operand must be a register X not a "
 										+ second + ",");
 					}
-				} else if (perfix.compare("*")) {
+				} else if (trim(operand).compare("*") == 0) {
 					if (!first.empty() || !comma.empty() || second.empty()) {
 						x.setError(
 								x.getError()
@@ -179,7 +179,8 @@ void parser::valid_syntax(statement& x) {
 							x.getError()
 									+ " extra characters at end of statement,");
 				}
-			} else {
+			}else if (trim(operand).compare("*") == 0) {}
+			else {
 				x.setError(x.getError() + " invalid operand,");
 			}
 		} else if (it->second.operands >= 1) { //check missed operand of this opcode
@@ -189,7 +190,7 @@ void parser::valid_syntax(statement& x) {
 		it = this->derctivetab.find(op);
 		if (it != this->derctivetab.end()) {
 			if (!(assertRegex(oprnd, rdig) || assertRegex(oprnd, rlabel)
-					|| assertRegex(oprnd, rexp) || assertRegex(oprnd, rconstant))) {
+					|| assertRegex(oprnd, rexp) || assertRegex(oprnd, rconstant)||assertRegex(oprnd,rwhite))) {
 				x.setError("Invalid operand ," + x.getError());
 			}
 		}

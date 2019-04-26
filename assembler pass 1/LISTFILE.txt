@@ -1,34 +1,22 @@
 line no.  address   label     op-code   operand   comment   
-                    .234567890123456789
-1         000000    LAB2C     START                         
-***Error: Invalid operand ,,  Invalid operand
-2         000000              LDA       ALP mmf HA          
-***Error:  invalid operand,, 
-3         000003              LDB       #10                 
-4         000006              LDX       #0                  
-5         000009              ADDR      A,B                 
-6         00000b              STA       SAVEW,X             
-7         00000e              LDX       #1                  
-8         000011              STA       SAVEW,s             
-***Error:  operand must be a register X not a S,, 
-                    14        .Format 4 
-9         000014              +SUB      #12                 
-10        000018              LDX       das                 
-11        00001b              LDCH      HEXCHAR             
-12        00001e              STA       INPUT               
-13        000021              ADD       LDCH STRING,X          
-***Error:  extra characters at end of statement,, 
-14        000024              COMP      INPUT               
-15        000027              JEQ       FOUND               
-16        00002a              STCH      OUTPUT,X            
-17        00002d              TIX       #5                  
-18        000030              JLT       ADD                 
-19        000033    FOUND     J         OUT                 
-20        000036    ALPHA     WORD      2                   
-21        000039    SAVEW     RESW      2                   
-22        00003f    HEXCHAR   BYTE      X'61'               
-23        000040    INPUT     RESB      1                   
-24        000041    STRING    BYTE      C'String'           
-25        000047    OUTPUT    RESB      5                   
-26        00004c    OUT       END       #4                  
-***Error: Invalid operand ,, 
+                    .23456789012345678901234567890123456
+0         000000    .Set ALPHA equal to the integer portion of BETA / GAMMA
+0         000000    .Label.  Opcode  The  O p e r a n d 
+0         000000    .         
+1         000000              START     0                   
+2         000000              LDA       BETA                
+3         000003              DIV       GAMMA               
+4         000006              STA       ALPHA               
+5         000009              J         *                   
+5         00000c    .         
+6         00000c    ALPHA     RESW      1                   
+7         00000f    BETA      RESW      1                   
+8         000012    GAMMA     RESW      1                   
+9         000015              END                           
+                    Symbol Table (value in decimal)
+
+          Name      Value     Reloc/Absol
+          
+          ALPHA     12        Relocatable
+          BETA      15        Relocatable
+          GAMMA     18        Relocatable
