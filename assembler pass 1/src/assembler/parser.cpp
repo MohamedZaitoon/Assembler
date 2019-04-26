@@ -6,23 +6,7 @@
 #include "assembler.h"
 #include <utility>
 using namespace std;
-typedef mnemonic_instruction instruct;
-
-const regex comment("^\\s*[\\.]([\\s\\S]*)");
-
-const regex opcode("^\\s*([+])?([\\S]+)\\s*$");
-
-const regex operand("^([#*@])?\\s*(\\S+)\\s*([,])?\\s*(\\S+)?$");
-
-const regex litral("^[=]\\s*([cCxX])\\s*['](\\w+)[']\\s*$");
-
-const regex label("(^[a-zA-Z][\\w]+)$");
-
-const regex instruction("^\\s*(?:(\\S+)?\\s+)?"
-		"(\\s*[+]?[\\w]+)\\s*"
-		"(?:\\s+([=#*@,'\\w\\s]+)?\\s*)?"
-		"(?:\\s+(\\.[\\s\\S]+)?)?$");
-
+typedef statement instruct;
 parser::parser() {
 	load_optab();
 	load_register_tab();
@@ -66,12 +50,91 @@ instruct parser::parse(string ins) {
 	}
 	return x;
 }
-void parser::valid_syntax(mnemonic_instruction& x){
+void parser::one_field(statement* x, string field) {
+	smatch m;
+	if (regex_search(field, m, opcode)) {
+		vector<string> groups = get_groups(m);
+		if (groups.size() == 2) {
+			x->setFormate4(true);
+			string op = groups[1];
+			x->setMnemonic(op);
+		} else if (groups.size() == 1) {
+			string op = groups[0];
+			x->setMnemonic(op);
+		}
+	}else {
+		x->setMnemonic(field);
+		x->setError(x->getError()+", missed mnemonic instruction");
+	}
+
+}
+
+void parser::two_field(statement* x, vector<string>& fields) {
+	smatch m;
+	if (regex_match(fields[0], m, opcode)) { // either label or opcode
+		vector<string> v = get_groups(m);
+		if (v.size() == 2) { //absolutely  opcde format 4
+			x->setFormate4(true);
+			//check_mnemonic(x, to_upper(v[1]));
+			x->setMnemonic(v[1]);
+			smatch sm;
+			if (regex_match(fields[1], sm, comment)) {
+				x->setComment(sm[1].str());
+			} else {//if (regex_match(fields[1], sm, operand)) {
+				x->setOperand(fields[1]);
+			}
+		} else if (v.size() == 1) { // either label or opcode
+			if (!assertReservedWord(v[0])) { //case first field label
+				x->setLabel(v[0]);
+				one_field(x,fields[1]);
+			} else {
+				one_field(x,fields[0]);
+				smatch sm;
+				 if (regex_match(fields[1], sm, comment)) {
+					 x->setComment(sm[1].str());
+				} else {//if (regex_match(fields[1], sm, operand)) {
+					x->setOperand(fields[1]);
+				}
+			}
+		}
+	}
+
+}
+void parser::three_field(statement* x, vector<string>& fields) {
+	vector<string> y(2);
+	y[0] = fields[0];
+	y[1] = fields[1];
+	two_field(x,y);
+	smatch sm;
+	if(regex_match(fields[2],sm,comment)){
+		x->setComment(sm.str());
+	}else {//if (regex_match(fields[2], sm, operand)) {
+		if(x->getOperand().empty())
+			x->setOperand(fields[2]);
+		else
+			x->setOperand(x->getOperand()+" "+fields[2]);
+	}/*else {
+		x->setError(x->getError()+", "+"syntax error");
+	}*/
+}
+void parser::four_field(statement* x, vector<string>& fields) {
+	x->setLabel(fields[0]);
+	one_field(x,fields[1]);
+	x->setOperand(fields[2]);
+	x->setComment(fields[3]);
+}
+void parser::valid_syntax(statement& x){
 	//label must begin with character
-	if(x.has_label()&& !regex_match(x.getLabel(),label)){
+	if(x.has_label()){
+		if(!regex_match(x.getLabel(),label)){
 		x.setError("label must begin with alphabetic character, "+x.getError());
+		}
+		if(assertReservedWord(x.getLabel())){
+			x.setError("label must not be a reserved word, "+x.getError());
+		}
 	}
 	//operand
+	string oprnd = to_upper(x.getOperand());
 	string op = to_upper(x.getMnemonic());
 	auto it = optab.find(op);
 	if(it != optab.end()){
@@ -88,99 +151,62 @@ void parser::valid_syntax(mnemonic_instruction& x){
 				 }else if(perfix == "*"&& !first.empty()){
 					 x.setError(x.getError()+", extra characters at end of statement");
 				 }else if(comma.empty() && !second.empty()){
-					 x.setError(x.getError()+", the must be comma ',' between two operands");
+					 x.setError(x.getError()+", Invalid Operand");
 				 }else if(oprs == 2){
 					 if(second.empty()){
 						 x.setError(x.getError()+", second register is missed");
 					 }else if (register_tab.find(first) == register_tab.end() ||
 							 register_tab.find(second) == register_tab.end()){
-						 x.setError(x.getError()+", operand must be a register");
+						 x.setError(x.getError()+", operands must be a register");
 					 }
-				 }else if(!second.empty() && "X" != to_upper(second)){
+				 }else if(!second.empty() &&  second.compare("X")!=0){
 					 x.setError(x.getError()+", operand must be a register X not a "+second);
+				 }else if(assertReservedWord(first)||assertReservedWord(second)){
+					 x.setError(x.getError()+", operand must be not a reserved word");
 				 }
 			}else if(regex_match(x.getOperand(),sm,litral)){
 				 //handle litral
 			}else{
 				x.setError(x.getError()+", invalid operand");
 			}
+		}else if(it->second.operands >= 1){
+			x.setError(x.getError()+",Missed operand");
 		}
 	}else {
-		// handle derictrive
-	}
-}
-
-void parser::one_field(mnemonic_instruction* x, string field) {
-	smatch m;
-	if (regex_search(field, m, opcode)) {
-		vector<string> groups = get_groups(m);
-		if (groups.size() == 2) {
-			x->setFormate4(true);
-			string op = groups[1];
-			//check_mnemonic(x, to_upper(op));
-			x->setMnemonic(op);
-		} else if (groups.size() == 1) {
-			string op = groups[0];
-			//check_mnemonic(x, to_upper(op));
-			x->setMnemonic(op);
-		} else {
-			x->setError(x->getError()+", Invalid instruction syntax");
-		}
-	}
-}
-
-void parser::two_field(mnemonic_instruction* x, vector<string>& fields) {
-	smatch m;
-	if (regex_match(fields[0], m, opcode)) { // either label or opcode
-		vector<string> v = get_groups(m);
-		if (v.size() == 2) { //absolutely  opcde format 4
-			x->setFormate4(true);
-			//check_mnemonic(x, to_upper(v[1]));
-			x->setMnemonic(v[1]);
-			smatch sm;
-			if (regex_match(fields[1], sm, comment)) {
-				x->setComment(sm[1].str());
-			} else if (regex_match(v[1], sm, operand)) {
-				x->setOperand(sm.str());
-			}
-		} else if (v.size() == 1) { // either label or opcode
-			if (optab.find(to_upper(v[0])) == optab.end()) { //case first field label
-				x->setLabel(v[0]);
-				one_field(x,fields[1]);
-			} else {
-				one_field(x,fields[0]);
-				smatch sm;
-				 if (regex_match(fields[1], sm, comment)) {
-					 x->setComment(sm[1].str());
-				} else if (regex_match(fields[1], sm, operand)) {
-					x->setOperand(sm.str());
-				}
+		it = this->derctivetab.find(op);
+		if(it != this->derctivetab.end()){
+			if(!(assertDigits(oprnd)||assertLabel(oprnd)||assertExcepression(oprnd)||assertConstant(oprnd))){
+				x.setError("Invalid operand ,"+x.getError());
 			}
 		}
 	}
-
 }
-void parser::three_field(mnemonic_instruction* x, vector<string>& fields) {
-	vector<string> y(2);
-	y[0] = fields[0];
-	y[1] = fields[1];
-	two_field(x,y);
-	smatch sm;
-	if(regex_match(fields[2],sm,comment)){
-		x->setComment(sm.str());
-	}else {
-		x->setError(x->getError()+", "+"syntax error");
+bool parser::assertDigits(string s){
+	return regex_search(s,dig);
+}
+bool parser::assertConstant(string s){
+	return regex_search(s,rconstant);
+}
+bool parser::assertLabel(string s){
+	return regex_search(s,label);
+}
+bool parser::assertExcepression(string s){
+	return regex_match(s,exp);
+}
+bool parser::assertReservedWord(string op){
+	string s = to_upper(op);
+	auto it1 = this->optab.find(s);
+	auto it2 = this->derctivetab.find(to_upper(s));
+	if(it1 != this->optab.end() || it2 != this->derctivetab.end()){
+		return true;
 	}
+	return false;
 }
-void parser::four_field(mnemonic_instruction* x, vector<string>& fields) {
-	x->setLabel(fields[0]);
-	one_field(x,fields[1]);
-	x->setOperand(fields[2]);
-	x->setComment(fields[3]);
-}
+
 vector<string> parser::get_groups(smatch m) {
 	vector<string> v;
-	for (int i = 1; i < m.size(); i++) {
+	int sz = m.size();
+	for (int i = 1; i < sz ; i++) {
 		string re = m[i].str();
 		if (!re.empty()) {
 			v.push_back(re);
@@ -194,7 +220,7 @@ vector<string> parser::get_groups(smatch m) {
  * 		format 2 does not come with format 4
  *
  */
-void parser::check_mnemonic(mnemonic_instruction*x, string op) {
+void parser::check_mnemonic(statement*x, string op) {
 	auto entry = optab.find(op);
 	if (entry == optab.end()) {
 		x->setError("this is invalid mnemonic instruction");

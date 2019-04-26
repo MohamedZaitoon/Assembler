@@ -1,15 +1,15 @@
 .234567890123456789
 LAB2C    START
-         LDA     ALPHA
+         LDA     ALP mmf HA
          LDB     #10
          LDX     #0
          ADDR    A,B
          STA     SAVEW,X
          LDX     #1
-         STA     SAVEW,X
+         STA     SAVEW,s
 .Format 4
          +SUB    #12
-         LDX     #0
+         LDX     'das
          LDCH    HEXCHAR
          STA     INPUT
 ADD      LDCH    STRING,X

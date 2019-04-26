@@ -1,12 +1,12 @@
 #include <iostream>
 #include "assembler/assembler.h"
 #include "assembler/parser.h"
-#include "assembler/mnemonicinstruction.h"
 #include <sstream>
 #include <vector>
 #include <iomanip>
 #include <stdio.h>
 #include <fstream>
+#include "assembler/statement.h"
 
 using namespace std;
 regex r("^\\s*pass1\\s+([\\s\\S]+)$");
@@ -24,8 +24,8 @@ void run(){
 	}
 }
 int main() {
-	run();
-	//pass1("T_F.txt");
+	//run();
+	pass1("ex.txt");
 //	int jf = 20;
 //	ofstream write;
 //	write.open("LISTFILE.txt", ios::trunc);

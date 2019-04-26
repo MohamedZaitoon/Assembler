@@ -1,40 +1,10 @@
                                    pass1
 line no.  address   label     op-code   operand   comment   
-                    .234567890123456789
-1         000000    LAB2C     START                         
-2         000000              LDA       ALPHA               
-3         000003              LDB       #10                 
-4         000006              LDX       #0                  
-5         000009              ADDR      A,B                 
-***Error: , second register is missed, 
-6         00000b              STA       SAVEW,X             
-7         00000e              LDX       #1                  
-8         000011              STA       SAVEW,X             
-          .Format 4 
-9         000014              +SUB      SUB                 
-10        000018              LDX       #0                  
-11        00001b              LDCH      HEXCHAR             
-12        00001e              STA       INPUT               
-13        000021              ADD       LDCH                
-***Error: , syntax error, 
-14        000024              COMP      INPUT               
-15        000027              JEQ       FOUND               
-16        00002a              STCH      OUTPUT,X            
-17        00002d              TIX       #5                  
-18        000030              JLT       ADD                 
-19        000033    FOUND     J                             
-***Error: , syntax error, 
-20        000036    ALPHA     WORD                          
-***Error: , syntax error, 
-21        000036    SAVEW     RESW                          
-***Error: , syntax error, 
-22        000036    HEXCHAR   BYTE                          
-***Error: , syntax error, 
-23        000036    INPUT     RESB                          
-***Error: , syntax error, 
-24        000036    STRING    BYTE                          
-***Error: , syntax error, 
-25        000036    OUTPUT    RESB                          
-***Error: , syntax error, 
-28        000036    OUT       END                           
-***Error: , syntax error
+1         0003a0    TERMPROJ  START     3A0                 
+                    .THIS IS A COMMENT LINE
+2         0003a0    LBL1      BYTE      C'ABCDEF'           
+3         0003a6    LBL2      RESB      4                   
+4         0003aa    LBL2      RESW      1                   
+***Error: , Symbol 'LBL2' is already defined
+5         0003ad    TOP       LDA       ZERO                
+6         0003b0              LDX       #INDEX             

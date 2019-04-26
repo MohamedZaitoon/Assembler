@@ -3,43 +3,34 @@
 #include <vector>
 #include "parser.h"
 #include <iostream>
-#include "mnemonicinstruction.h"
 #include <string>
 #include <algorithm>
 #include <sstream>
 #include <map>
 #include <iomanip>
+
+#include "statement.h"
 #define ll int
 
 using namespace std;
+void handleDerictive(statement& ins, string op, parser& p, string& error);
+
 template<typename T>
-long long hex_to_dec(T h) {
-	long long l;
-	stringstream ss;
-	ss << h;
-	ss >> std::hex >> l;
-	return l;
-}
+long long hex_to_dec(T h);
+
 template<typename T>
-long long to_long(T h) {
-	long long l;
-	stringstream ss;
-	ss << h;
-	ss >> l;
-	return l;
-}
+ll to_long(T h);
+
 template<typename T>
-string dec_to_hex(T d) {
-	stringstream ss;
-	ss << std::hex << d;
-	return ss.str();
-}
-string to_string(int d) {
-	stringstream ss;
-	ss << d;
-	return ss.str();
-}
-typedef mnemonic_instruction instruct;
+string dec_to_hex(T d);
+
+string to_string(int d);
+
+string to_upper(string s);
+string read_file(string path);
+void writeListFile(ofstream& w, int line_no, ll address, statement& x) ;
+void writeCommentLine(ofstream& w, int line_no, ll address,statement& x);
+void writeError(ofstream& w, string error);
 struct symbol {
 	const bool byte = false;
 	const bool word = true;
@@ -56,6 +47,7 @@ struct symbol {
 	}
 };
 
+
 vector<string> code_lines;
 
 map<string, symbol> symtab;
@@ -65,89 +57,27 @@ ll startaddrs;
 ll len;
 const int jf = 10;
 
-string to_upper(string s) {
-	transform(s.begin(), s.end(), s.begin(), ::toupper);
-	return s;
-}
-string read_file(string path) {
-	ifstream in;
-	string line;
-	code_lines.clear();
-	in.open(path);
-	if (in.is_open()) {
-		while (getline(in, line)) {
-			code_lines.push_back(line);
-		}
-		in.close();
-		return "Done";
-	} else {
-		return "Can't open file";
-	}
-}
 
-void writeListFile(ofstream& w, int line_no, long long address,
-		mnemonic_instruction& x) {
-	string plus = "";
-	if (x.isFormate4())
-		plus = "+";
-
-	stringstream s;
-	s<<setfill('0')<<setw(6)<<dec_to_hex(address);
-
-	cout << std::left << setw(jf) << line_no <<setw(jf)<< s.str()
-			<< setw(jf) << x.getLabel() << setw(jf) << plus + x.getMnemonic()
-			<< setw(jf) << x.getOperand() << setw(jf) << x.getComment() << endl;
-
-	if (w.is_open()) {
-		w << std::left << setw(jf) << line_no << setw(jf) << s.str()
-				<< setw(jf) << x.getLabel() << setw(jf)
-				<< plus + x.getMnemonic() << setw(jf) << x.getOperand()
-				<< setw(jf) << x.getComment() << endl;
-	}
-}
-void writeCommentLine(ofstream& w, int line_no, long long address,
-		mnemonic_instruction& x) {
-
-	cout << std::left << setw(jf) << line_no << setw(jf) << dec_to_hex(address)
-			<< setw(jf) << x.getComment() << endl;
-
-	if (w.is_open())
-		w << std::left << setw(jf) << line_no << setw(jf) << dec_to_hex(address)
-				<< setw(jf) << x.getComment() << endl;
-}
-
-void writeError(ofstream& w, string error) {
-
-	cout << "***Error: " << error << endl;
-
-	if (w.is_open())
-		w << "***Error: " << error << endl;
-}
 
 string pass1(string path) {
-	cout << "reading file :" + path <<": " +read_file(path) << endl;
+	cout << "reading file :" + path << ": " + read_file(path) << endl;
 	ofstream write;
 	write.open("LISTFILE.txt", ios::trunc);
 	if (write.is_open()) {
 		bool foundError = false;
 		int lineno = 0;
-
-		cout << std::left <<setw(jf) << "pass1" << endl;
-		cout << std::left << setw(jf) << "line no." << setw(jf) << "address"
-				<< setw(jf) << "label" << setw(jf) << "op-code" << setw(jf)
-				<< "operand" << setw(jf) << "comment" << endl;
-
-		write << setw(3*jf+10) << "pass1" << endl;
+		write << setw(3 * jf + 10) << "pass1" << endl;
 		write << std::left << setw(jf) << "line no." << setw(jf) << "address"
 				<< setw(jf) << "label" << setw(jf) << "op-code" << setw(jf)
 				<< "operand" << setw(jf) << "comment" << endl;
 		if (!code_lines.empty()) {
 			int siz = code_lines.size();
 			parser p;
-			instruct ins = p.parse(code_lines[0]);
+			statement ins = p.parse(code_lines[0]);
 			string op = to_upper(ins.getMnemonic());
-			if (!ins.is_comment() && op.compare("START")) { //must check label also
-				regex r("^[\\da-fA-F]+&");
+			cout << op << endl;
+			if (!ins.is_comment() && !op.compare("START")) { //must check label also
+				regex r("^[\\da-fA-F]+$");
 				if (regex_match(ins.getOperand(), r)) {
 					locctr = hex_to_dec(ins.getOperand());
 					writeListFile(write, ++lineno, locctr, ins);
@@ -156,7 +86,8 @@ string pass1(string path) {
 					foundError = true;
 				}
 			} else if (ins.is_comment()) {
-				write <<std::left<< setw(jf)<<""<<setw(jf)<<""<<setw(jf)<<ins.getComment() << endl;
+				write << std::left << setw(jf) << "" << setw(jf) << ""
+						<< setw(jf) << ins.getComment() << endl;
 				locctr = 0;
 			} else {
 				locctr = 0;
@@ -197,20 +128,9 @@ string pass1(string path) {
 							locctr += 3 + ins.isFormate4();
 						}
 					} else {
-						it = p.derctivetab.find(ins.getOperand());
+						it = p.derctivetab.find(op);
 						if (it != p.derctivetab.end()) {
-							if (!op.compare("WORD")) {
-								locctr += 3;
-
-							} else if (!op.compare("BYTE")) {
-								//handle byte
-							} else if (!op.compare("RESW")) {
-								ll k = to_long(ins.getOperand());
-								locctr += k * 3;
-							} else if (!op.compare("RESB")) {
-								ll k = to_long(ins.getOperand());
-								locctr += k;
-							}
+								handleDerictive(ins,op,p,error);
 						} else {
 							foundError = true;
 						}
@@ -220,8 +140,8 @@ string pass1(string path) {
 						writeError(write, ins.getError() + ", " + error);
 				} //end if not a comment
 				else {
-					write << setw(jf) << "" << setw(jf) << ins.getComment()
-							<< endl;
+					write << std::left << setw(jf) << "" << setw(jf) << ""
+							<< setw(jf) << ins.getComment() << endl;
 				}
 
 			}
@@ -237,4 +157,123 @@ string pass1(string path) {
 
 	return "done";
 }
+string to_upper(string s) {
+	transform(s.begin(), s.end(), s.begin(), ::toupper);
+	return s;
+}
+string read_file(string path) {
+	ifstream in;
+	string line;
+	code_lines.clear();
+	in.open(path);
+	if (in.is_open()) {
+		while (getline(in, line)) {
+			code_lines.push_back(line);
+		}
+		in.close();
+		return "Done";
+	} else {
+		return "Can't open file";
+	}
+}
 
+void handleDerictive(statement& ins, string op, parser& p, string& error) {
+	if (!op.compare("WORD")) {			//handle range
+		locctr += 3;
+	} else if (!op.compare("BYTE")) {
+		if (p.assertConstant(ins.getOperand())) {
+			smatch sm;
+			regex_match(ins.getOperand(), sm, rconstant);
+			string c = to_upper(sm[1].str());
+			string b = sm[2].str();
+			int len = b.length();
+			if (len > 15)
+				error += "Exceeding the allowed number of constant";
+			else if (c.compare("C") == 0) {
+				locctr += len;
+			} else {
+				if (len % 2 == 0)
+					locctr += len / 2;
+				else {
+					error += "Hex character must be even,";
+				}
+			}
+		}
+	} else if (!op.compare("RESW")) {
+		if (p.assertDigits(ins.getOperand())) {
+			ll k = to_long(ins.getOperand());
+			locctr += k * 3;
+		}
+	} else if (!op.compare("RESB")) {
+		if (p.assertDigits(ins.getOperand())) {
+			ll k = to_long(ins.getOperand());
+			locctr += k;
+		}
+	} else if (!op.compare("EQU")) {
+
+	} else if (!op.compare("ORG")) {
+
+	} else if (!op.compare("LTORG")) {
+
+	}
+
+}
+
+void writeListFile(ofstream& w, int line_no, ll address, statement& x) {
+	string plus = "";
+	if (x.isFormate4())
+		plus = "+";
+
+	stringstream s;
+	s << setfill('0') << setw(6) << dec_to_hex(address);
+
+	if (w.is_open()) {
+		w << std::left << setw(jf) << line_no << setw(jf) << s.str() << setw(jf)
+				<< x.getLabel() << setw(jf) << plus + x.getMnemonic()
+				<< setw(jf) << x.getOperand() << setw(jf) << x.getComment()
+				<< endl;
+	}
+}
+void writeCommentLine(ofstream& w, int line_no, ll address,
+		statement& x) {
+
+	if (w.is_open())
+		w << std::left << setw(jf) << line_no << setw(jf) << dec_to_hex(address)
+				<< setw(jf) << x.getComment() << endl;
+}
+
+void writeError(ofstream& w, string error) {
+
+	if (w.is_open())
+		w << "***Error: " << error << endl;
+}
+
+
+template<typename T>
+long long hex_to_dec(T h) {
+	long long l;
+	stringstream ss;
+	ss << h;
+	ss >> std::hex >> l;
+	return l;
+}
+
+template<typename T>
+ll to_long(T h) {
+	ll l;
+	stringstream ss;
+	ss << h;
+	ss >> l;
+	return l;
+}
+template<typename T>
+string dec_to_hex(T d) {
+	stringstream ss;
+	ss << std::hex << d;
+	return ss.str();
+}
+string to_string(int d) {
+	stringstream ss;
+	ss << d;
+	return ss.str();
+}
