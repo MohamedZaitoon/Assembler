@@ -9,7 +9,7 @@ LAB2C    START
          STA     SAVEW,s
 .Format 4
          +SUB    #12
-         LDX     'das
+         LDX     das
          LDCH    HEXCHAR
          STA     INPUT
 ADD      LDCH    STRING,X

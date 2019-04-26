@@ -1,10 +1,34 @@
 line no.  address   label     op-code   operand   comment   
-1         000000    TERMPROJ  START     3A0                 
-                    3a0       .THIS IS A COMMENT LINE
-2         0003a0    LBL1      BYTE      C+6'ABCDEF'       .aldknk alsjfnjan aofnuij
+                    .234567890123456789
+1         000000    LAB2C     START                         
+***Error: Invalid operand ,,  Invalid operand
+2         000000              LDA       ALP mmf HA          
+***Error:  invalid operand,, 
+3         000003              LDB       #10                 
+4         000006              LDX       #0                  
+5         000009              ADDR      A,B                 
+6         00000b              STA       SAVEW,X             
+7         00000e              LDX       #1                  
+8         000011              STA       SAVEW,s             
+***Error:  operand must be a register X not a S,, 
+                    14        .Format 4 
+9         000014              +SUB      #12                 
+10        000018              LDX       das                 
+11        00001b              LDCH      HEXCHAR             
+12        00001e              STA       INPUT               
+13        000021              ADD       LDCH STRING,X          
+***Error:  extra characters at end of statement,, 
+14        000024              COMP      INPUT               
+15        000027              JEQ       FOUND               
+16        00002a              STCH      OUTPUT,X            
+17        00002d              TIX       #5                  
+18        000030              JLT       ADD                 
+19        000033    FOUND     J         OUT                 
+20        000036    ALPHA     WORD      2                   
+21        000039    SAVEW     RESW      2                   
+22        00003f    HEXCHAR   BYTE      X'61'               
+23        000040    INPUT     RESB      1                   
+24        000041    STRING    BYTE      C'String'           
+25        000047    OUTPUT    RESB      5                   
+26        00004c    OUT       END       #4                  
 ***Error: Invalid operand ,, 
-3         0003a0    LBL2      RESB      4                   
-4         0003a4    LBL2      RESW      1                   
-***Error: , Symbol 'LBL2' is already defined
-5         0003a7    TOP       LDA       ZERO                
-6         0003aa              LDX       #INDEX              
