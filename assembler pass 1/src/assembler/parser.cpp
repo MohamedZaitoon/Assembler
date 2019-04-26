@@ -6,7 +6,6 @@
 #include "assembler.h"
 #include <utility>
 using namespace std;
-typedef statement instruct;
 parser::parser() {
 	load_optab();
 	load_register_tab();
@@ -16,13 +15,13 @@ parser::parser() {
 parser::~parser() {
 }
 
-instruct parser::parse(string ins) {
-	instruct x;
+statement parser::parse(string ins) {
+	statement x;
 	smatch result;
-	if (regex_match(ins, result, comment)) {
+	if (regex_match(ins, result, rcomment)) {
 		x.setComment(*result.begin());
 		return x;
-	} else if (regex_search(ins, result, instruction)) {
+	} else if (regex_search(ins, result, rinstruction)) {
 		if (result.empty())
 			goto invalid;
 		vector<string> v = get_groups(result);
@@ -52,7 +51,7 @@ instruct parser::parse(string ins) {
 }
 void parser::one_field(statement* x, string field) {
 	smatch m;
-	if (regex_search(field, m, opcode)) {
+	if (regex_search(field, m, ropcode)) {
 		vector<string> groups = get_groups(m);
 		if (groups.size() == 2) {
 			x->setFormate4(true);
@@ -62,37 +61,36 @@ void parser::one_field(statement* x, string field) {
 			string op = groups[0];
 			x->setMnemonic(op);
 		}
-	}else {
+	} else {
 		x->setMnemonic(field);
-		x->setError(x->getError()+", missed mnemonic instruction");
+		x->setError(x->getError() + " missed mnemonic instruction,");
 	}
 
 }
 
 void parser::two_field(statement* x, vector<string>& fields) {
 	smatch m;
-	if (regex_match(fields[0], m, opcode)) { // either label or opcode
+	if (regex_match(fields[0], m, ropcode)) { // either label or opcode
 		vector<string> v = get_groups(m);
 		if (v.size() == 2) { //absolutely  opcde format 4
 			x->setFormate4(true);
-			//check_mnemonic(x, to_upper(v[1]));
 			x->setMnemonic(v[1]);
 			smatch sm;
-			if (regex_match(fields[1], sm, comment)) {
+			if (regex_match(fields[1], sm, rcomment)) {
 				x->setComment(sm[1].str());
-			} else {//if (regex_match(fields[1], sm, operand)) {
+			} else {
 				x->setOperand(fields[1]);
 			}
 		} else if (v.size() == 1) { // either label or opcode
 			if (!assertReservedWord(v[0])) { //case first field label
 				x->setLabel(v[0]);
-				one_field(x,fields[1]);
+				one_field(x, fields[1]);
 			} else {
-				one_field(x,fields[0]);
+				one_field(x, fields[0]);
 				smatch sm;
-				 if (regex_match(fields[1], sm, comment)) {
-					 x->setComment(sm[1].str());
-				} else {//if (regex_match(fields[1], sm, operand)) {
+				if (regex_match(fields[1], sm, rcomment)) {
+					x->setComment(sm[1].str());
+				} else {
 					x->setOperand(fields[1]);
 				}
 			}
@@ -104,115 +102,114 @@ void parser::three_field(statement* x, vector<string>& fields) {
 	vector<string> y(2);
 	y[0] = fields[0];
 	y[1] = fields[1];
-	two_field(x,y);
+	two_field(x, y);
 	smatch sm;
-	if(regex_match(fields[2],sm,comment)){
+	if (regex_match(fields[2], sm, rcomment)) {
 		x->setComment(sm.str());
-	}else {//if (regex_match(fields[2], sm, operand)) {
-		if(x->getOperand().empty())
+	} else {
+		if (x->getOperand().empty())
 			x->setOperand(fields[2]);
 		else
-			x->setOperand(x->getOperand()+" "+fields[2]);
-	}/*else {
-		x->setError(x->getError()+", "+"syntax error");
-	}*/
+			x->setOperand(x->getOperand() + " " + fields[2]);
+	}
 }
 void parser::four_field(statement* x, vector<string>& fields) {
 	x->setLabel(fields[0]);
-	one_field(x,fields[1]);
+	one_field(x, fields[1]);
 	x->setOperand(fields[2]);
 	x->setComment(fields[3]);
 }
-void parser::valid_syntax(statement& x){
-	//label must begin with character
-	if(x.has_label()){
-		if(!regex_match(x.getLabel(),label)){
-		x.setError("label must begin with alphabetic character, "+x.getError());
-		}
-		if(assertReservedWord(x.getLabel())){
-			x.setError("label must not be a reserved word, "+x.getError());
-		}
-	}
-	//operand
+
+void parser::valid_syntax(statement& x) {
 	string oprnd = to_upper(x.getOperand());
 	string op = to_upper(x.getMnemonic());
-	auto it = optab.find(op);
-	if(it != optab.end()){
-		if(!x.getOperand().empty()){
-			smatch sm;
-			if(regex_match(x.getOperand(),sm,operand)){
-				 string perfix = sm[1].str();
-				 string first = to_upper(sm[2].str());
-				 string comma = sm[3].str();
-				 string second = to_upper(sm[4].str());
-				 int oprs = it->second.operands;
-				 if((!perfix.compare("#") || !perfix.compare("@"))&&!comma.empty()&&!second.empty()){
-					 x.setError(x.getError()+", illegal addressing mode");
-				 }else if(perfix == "*"&& !first.empty()){
-					 x.setError(x.getError()+", extra characters at end of statement");
-				 }else if(comma.empty() && !second.empty()){
-					 x.setError(x.getError()+", Invalid Operand");
-				 }else if(oprs == 2){
-					 if(second.empty()){
-						 x.setError(x.getError()+", second register is missed");
-					 }else if (register_tab.find(first) == register_tab.end() ||
-							 register_tab.find(second) == register_tab.end()){
-						 x.setError(x.getError()+", operands must be a register");
-					 }
-				 }else if(!second.empty() &&  second.compare("X")!=0){
-					 x.setError(x.getError()+", operand must be a register X not a "+second);
-				 }else if(assertReservedWord(first)||assertReservedWord(second)){
-					 x.setError(x.getError()+", operand must be not a reserved word");
-				 }
-			}else if(regex_match(x.getOperand(),sm,litral)){
-				 //handle litral
-			}else{
-				x.setError(x.getError()+", invalid operand");
-			}
-		}else if(it->second.operands >= 1){
-			x.setError(x.getError()+",Missed operand");
+	if (x.has_label()) {
+		if (!regex_match(x.getLabel(), rlabel)) { //label must begin with character
+			x.setError(
+					"label must begin with alphabetic character, "
+							+ x.getError());
 		}
-	}else {
+		if (assertReservedWord(x.getLabel())) { //label is not reserved word
+			x.setError("label must not be a reserved word, " + x.getError());
+		}
+	}
+	check_mnemonic(x, op);
+
+	auto it = optab.find(op);
+	if (it != optab.end()) {
+		if (!x.getOperand().empty()) { //operand validation
+			smatch sm;
+			string operand = x.getOperand();
+			if (regex_match(operand, sm, roperand)) {
+				string perfix = sm[1].str();
+				string first = to_upper(sm[2].str());
+				string comma = sm[3].str();
+				string second = to_upper(sm[4].str());
+				int oprs = it->second.operands;
+				if (assertRegex(operand, rdig)
+						|| assertRegex(operand, rlabel)) {
+				} else if (assertRegex(operand, rimmd_ind)) {
+				} else if (assertRegex(operand, rlitral)) {
+				} else if (assertRegex(operand, r2operand)) {
+					if (oprs == 2) {
+						if (!(assertRegister(first) && assertRegister(second))) {
+							x.setError(
+									x.getError()
+											+ " operands must be a register,");
+						}
+					} else if (assertReservedWord(first)) {
+						x.setError(
+								x.getError()
+										+ " operand must be not a reserved word,");
+					} else if (second.compare("X") != 0) {
+						x.setError(
+								x.getError()
+										+ " operand must be a register X not a "
+										+ second + ",");
+					}
+				} else if (perfix.compare("*")) {
+					if (!first.empty() || !comma.empty() || second.empty()) {
+						x.setError(
+								x.getError()
+										+ " extra characters at end of statement,");
+					}
+				} else {
+					x.setError(
+							x.getError()
+									+ " extra characters at end of statement,");
+				}
+			} else {
+				x.setError(x.getError() + " invalid operand,");
+			}
+		} else if (it->second.operands >= 1) { //check missed operand of this opcode
+			x.setError(x.getError() + "Missed operand,");
+		}
+	} else {
 		it = this->derctivetab.find(op);
-		if(it != this->derctivetab.end()){
-			if(!(assertDigits(oprnd)||assertLabel(oprnd)||assertExcepression(oprnd)||assertConstant(oprnd))){
-				x.setError("Invalid operand ,"+x.getError());
+		if (it != this->derctivetab.end()) {
+			if (!(assertRegex(oprnd, rdig) || assertRegex(oprnd, rlabel)
+					|| assertRegex(oprnd, rexp) || assertRegex(oprnd, rconstant))) {
+				x.setError("Invalid operand ," + x.getError());
 			}
 		}
 	}
 }
-bool parser::assertDigits(string s){
-	return regex_search(s,dig);
+bool parser::assertRegex(string s, regex r) {
+	return regex_match(s, r);
 }
-bool parser::assertConstant(string s){
-	return regex_search(s,rconstant);
-}
-bool parser::assertLabel(string s){
-	return regex_search(s,label);
-}
-bool parser::assertExcepression(string s){
-	return regex_match(s,exp);
-}
-bool parser::assertReservedWord(string op){
+bool parser::assertReservedWord(string op) {
 	string s = to_upper(op);
 	auto it1 = this->optab.find(s);
 	auto it2 = this->derctivetab.find(to_upper(s));
-	if(it1 != this->optab.end() || it2 != this->derctivetab.end()){
+	if (it1 != this->optab.end() || it2 != this->derctivetab.end()) {
 		return true;
 	}
 	return false;
 }
+bool parser::assertRegister(string s) {
+	string o = to_upper(s);
+	return register_tab.find(o) != register_tab.end();
 
-vector<string> parser::get_groups(smatch m) {
-	vector<string> v;
-	int sz = m.size();
-	for (int i = 1; i < sz ; i++) {
-		string re = m[i].str();
-		if (!re.empty()) {
-			v.push_back(re);
-		}
-	}
-	return v;
 }
 /**
  * check that:
@@ -220,47 +217,66 @@ vector<string> parser::get_groups(smatch m) {
  * 		format 2 does not come with format 4
  *
  */
-void parser::check_mnemonic(statement*x, string op) {
-	auto entry = optab.find(op);
-	if (entry == optab.end()) {
-		x->setError("this is invalid mnemonic instruction");
-	} else {
+void parser::check_mnemonic(statement&x, string op) {
+	auto entry = optab.find(to_upper(op));
+	if (entry != optab.end()) {
 		info t = entry->second;
-		if (x->isFormate4() && t.formate == 2) {
-			x->setError(op + " must be format 2");
-		}
+		if (x.isFormate4() && t.formate == 2)
+			x.setError(op + " cant't be format 4");
+
+	} else {
+		entry = derctivetab.find(to_upper(op));
+		if (entry != derctivetab.end()) {
+			info t = entry->second;
+			if (x.isFormate4())
+				x.setError(op + " cant't be format 4,");
+
+		} else
+			x.setError("invalid mnemonic instruction, ");
 	}
 }
 
-void parser::load_derictve(){
-	this->derctivetab.insert(make_pair("START",make_info(0,"",1)));
-	this->derctivetab.insert(make_pair("END",make_info(0,"",0)));
-	this->derctivetab.insert(make_pair("BYTE",make_info(0,"",1)));
-	this->derctivetab.insert(make_pair("WORD",make_info(0,"",1)));
-	this->derctivetab.insert(make_pair("RESB",make_info(0,"",1)));
-	this->derctivetab.insert(make_pair("RESW",make_info(0,"",1)));
-	this->derctivetab.insert(make_pair("BASE",make_info(0,"",1)));
-	this->derctivetab.insert(make_pair("NOBASE",make_info(0,"",0)));
-	this->derctivetab.insert(make_pair("EXTDEF",make_info(0,"",1)));
-	this->derctivetab.insert(make_pair("EXTREF",make_info(0,"",1)));
-	this->derctivetab.insert(make_pair("EQU",make_info(0,"",1)));
-	this->derctivetab.insert(make_pair("USE",make_info(0,"",1)));
-	this->derctivetab.insert(make_pair("CSECT",make_info(0,"",1)));
-	this->derctivetab.insert(make_pair("ORG",make_info(0,"",1)));
-	this->derctivetab.insert(make_pair("LTORG",make_info(0,"",0)));
+vector<string> parser::get_groups(smatch m) {
+	vector<string> v;
+	int sz = m.size();
+	for (int i = 1; i < sz; i++) {
+		string re = m[i].str();
+		if (!re.empty()) {
+			v.push_back(re);
+		}
+	}
+	return v;
+}
+
+void parser::load_derictve() {
+	this->derctivetab.insert(make_pair("START", make_info(0, "", 1)));
+	this->derctivetab.insert(make_pair("END", make_info(0, "", 0)));
+	this->derctivetab.insert(make_pair("BYTE", make_info(0, "", 1)));
+	this->derctivetab.insert(make_pair("WORD", make_info(0, "", 1)));
+	this->derctivetab.insert(make_pair("RESB", make_info(0, "", 1)));
+	this->derctivetab.insert(make_pair("RESW", make_info(0, "", 1)));
+	this->derctivetab.insert(make_pair("BASE", make_info(0, "", 1)));
+	this->derctivetab.insert(make_pair("NOBASE", make_info(0, "", 0)));
+	this->derctivetab.insert(make_pair("EXTDEF", make_info(0, "", 1)));
+	this->derctivetab.insert(make_pair("EXTREF", make_info(0, "", 1)));
+	this->derctivetab.insert(make_pair("EQU", make_info(0, "", 1)));
+	this->derctivetab.insert(make_pair("USE", make_info(0, "", 1)));
+	this->derctivetab.insert(make_pair("CSECT", make_info(0, "", 1)));
+	this->derctivetab.insert(make_pair("ORG", make_info(0, "", 1)));
+	this->derctivetab.insert(make_pair("LTORG", make_info(0, "", 0)));
 
 }
 
-void parser::load_register_tab(){
-	register_tab.insert(make_pair("A",0));
-	register_tab.insert(make_pair("X",1));
-	register_tab.insert(make_pair("L",2));
-	register_tab.insert(make_pair("B",3));
-	register_tab.insert(make_pair("S",4));
-	register_tab.insert(make_pair("T",5));
-	register_tab.insert(make_pair("F",6));
-	register_tab.insert(make_pair("PC",8));
-	register_tab.insert(make_pair("SW",9));
+void parser::load_register_tab() {
+	register_tab.insert(make_pair("A", 0));
+	register_tab.insert(make_pair("X", 1));
+	register_tab.insert(make_pair("L", 2));
+	register_tab.insert(make_pair("B", 3));
+	register_tab.insert(make_pair("S", 4));
+	register_tab.insert(make_pair("T", 5));
+	register_tab.insert(make_pair("F", 6));
+	register_tab.insert(make_pair("PC", 8));
+	register_tab.insert(make_pair("SW", 9));
 }
 
 void parser::load_optab() {
@@ -324,7 +340,6 @@ void parser::load_optab() {
 	add("HIO", make_info(1, "F4", 0));
 	add("FLOAT", make_info(1, "C0", 0));
 	add("FIX", make_info(1, "C4", 0));
-
 
 }
 

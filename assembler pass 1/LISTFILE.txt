@@ -1,4 +1,3 @@
-                                   pass1
 line no.  address   label     op-code   operand   comment   
 1         0003a0    TERMPROJ  START     3A0                 
                     .THIS IS A COMMENT LINE
@@ -7,4 +6,4 @@ line no.  address   label     op-code   operand   comment
 4         0003aa    LBL2      RESW      1                   
 ***Error: , Symbol 'LBL2' is already defined
 5         0003ad    TOP       LDA       ZERO                
-6         0003b0              LDX       #INDEX             
+6         0003b0              LDX       #INDEX              
