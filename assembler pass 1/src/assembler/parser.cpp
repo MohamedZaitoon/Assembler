@@ -44,6 +44,7 @@ statement parser::parse(string ins) {
 		valid_syntax(x);
 
 	} else {
+		x.setComment(ins);
 		invalid: x.setError("Invalid instruction syntax");
 		return x;
 	}
@@ -61,9 +62,6 @@ void parser::one_field(statement* x, string field) {
 			string op = groups[0];
 			x->setMnemonic(op);
 		}
-	} else {
-		x->setMnemonic(field);
-		x->setError(x->getError() + " missed mnemonic instruction,");
 	}
 
 }
@@ -173,7 +171,10 @@ void parser::valid_syntax(statement& x) {
 								x.getError()
 										+ " extra characters at end of statement,");
 					}
-				} else {
+				}else if(comma.empty() && !second.empty()){
+					 x.setError(x.getError()+"Invalid operand, ");
+				 }
+				else {
 					x.setError(
 							x.getError()
 									+ " extra characters at end of statement,");

@@ -49,7 +49,7 @@ ll locctr;
 ll startaddrs;
 ll len;
 const int jf = 10;
-symbol temp;
+symbol temp(0,0,0,0);
 
 string pass1(string path) {
 	cout << "reading file :" + path << ": " + read_file(path) << endl;
@@ -63,16 +63,16 @@ string pass1(string path) {
 			int siz = code_lines.size();
 			parser p;
 			int i = 0;
-			while (i < siz && code_lines[i].empty())
+			while (i < siz && regex_match(code_lines[i], rwhite))
 				i++;
 			if (i < siz) {
 				statement ins = p.parse(code_lines[i++]);
 				string op = to_upper(ins.getMnemonic());
 				if (!ins.is_comment() && !op.compare("START")) { //must check label also
 					regex r("^[\\da-fA-F]+$");
+					writeListFile(write, ++lineno, locctr, ins);
 					if (regex_match(ins.getOperand(), r)) {
 						locctr = hex_to_dec(ins.getOperand());
-						writeListFile(write, ++lineno, locctr, ins);
 					} else {
 						writeError(write, "invalid operand");
 						locctr = 0;
@@ -83,6 +83,9 @@ string pass1(string path) {
 							<< setw(jf) << ins.getComment() << endl;
 					locctr = 0;
 				} else {
+					writeListFile(write, ++lineno, locctr, ins);
+					if(!ins.has_error())
+						writeError(write, ins.getError());
 					locctr = 0;
 				}
 				for (; i < siz; i++) {
@@ -132,6 +135,7 @@ string pass1(string path) {
 								handleDerictive(ins, op, p, error);
 							} else {//handle existence during parsing
 								foundError = true;
+								locctr +=3;
 							}
 						}
 
@@ -153,7 +157,7 @@ string pass1(string path) {
 					} //end if not a comment
 					else {
 						write << std::left << setw(jf) << "" << setw(jf) << ""
-								<< setw(jf) << ins.getComment() << endl;
+								<< setw(jf) <<dec_to_hex(locctr) << setw(jf) <<ins.getComment() << endl;
 					}
 
 				}

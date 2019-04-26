@@ -16,7 +16,6 @@ class statement {
 	string comment;
 	string error;
 	bool formate4;
-	string litral;
 
 public:
 	statement(string label,string mnemonic,string operand,string comment);
@@ -76,13 +75,6 @@ public:
 		this->operand = operand;
 	}
 
-	const string& getLitral() const {
-		return litral;
-	}
-
-	void setLitral(const string& litral) {
-		this->litral = litral;
-	}
 };
 
 #endif
