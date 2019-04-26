@@ -20,13 +20,15 @@ void run(){
 		if(regex_match(s,sm,r)){
 			cout<<"file :"<<sm[1].str()<<endl;
 			cout<<pass1(sm[1].str())<<endl;
+		}else{
+			cout<<"Invalid command or path"<<endl;
 		}
 	}
 }
 
 int main() {
-	//run();
-	cout<<pass1("T_F.txt")<<endl;
+	run();
+	//cout<<pass1("T_F.txt")<<endl;
 	cout<<"end pass1";
 	return 0;
 }

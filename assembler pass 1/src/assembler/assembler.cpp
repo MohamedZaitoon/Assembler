@@ -155,8 +155,9 @@ string pass1(string path) {
 						}
 					} //end if not a comment
 					else {
-						write << std::left << setw(jf) << "" << setw(jf) << ""
-								<< setw(jf) << dec_to_hex(locctr) << setw(jf)
+						stringstream s;
+							s << setfill('0') << setw(6) << dec_to_hex(locctr);
+							write  << std::left << setw(jf) << lineno << setw(jf) << s.str() << setw(jf)
 								<< ins.getComment() << endl;
 					}
 
@@ -421,7 +422,7 @@ void writeListFile(ofstream& w, int line_no, ll address, statement& x) {
 	if (w.is_open()) {
 		w << std::left << setw(jf) << line_no << setw(jf) << s.str() << setw(jf)
 				<< x.getLabel() << setw(jf) << plus + x.getMnemonic()
-				<< setw(jf) << x.getOperand() << setw(jf) << x.getComment()
+				<< setw(jf) << trim(x.getOperand()) << setw(jf) << x.getComment()
 				<< endl;
 	}
 }
