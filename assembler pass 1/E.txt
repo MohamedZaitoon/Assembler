@@ -1,0 +1,23 @@
+.23456789012345678901234567890123456
+.Read a string from device F3, 
+.calculate its length and store it 
+.in register A
+.Label.  Opcode  The  O p e r a n d 
+.
+         START   0
+         LDS     #0
+         LDT     #1
+         LDA     #0                 
+READ     TD      INDEV
+         JEQ     READ
+         RD      INDEV
+         ADDR    T,S
+         COMP    ELINE
+         JEQ     ENDC
+         J       READ
+ENDC     RMO     S,A
+         SUB     #1                  
+         J       *
+INDEV    BYTE    X'F3'
+ELINE    BYTE    X'000004'
+         END     

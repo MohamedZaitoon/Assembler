@@ -135,9 +135,9 @@ void parser::valid_syntax(statement& x) {
 
 	auto it = optab.find(op);
 	if (it != optab.end()) {
-		if (!x.getOperand().empty()) { //operand validation
+		if (!trim(x.getOperand()).empty()) { //operand validation
 			smatch sm;
-			string operand = x.getOperand();
+			string operand = trim(x.getOperand());
 			if (regex_match(operand, sm, roperand)) {
 				string perfix = sm[1].str();
 				string first = to_upper(sm[2].str());
@@ -147,8 +147,7 @@ void parser::valid_syntax(statement& x) {
 				if (assertRegex(operand, rdig)
 						|| assertRegex(operand, rlabel)) {
 				} else if (assertRegex(operand, rimmd_ind)) {
-				} else if (assertRegex(operand, rlitral)) {
-				} else if (assertRegex(operand, r2operand)) {
+				}  else if (assertRegex(operand, r2operand)) {
 					if (oprs == 2) {
 						if (!(assertRegister(first) && assertRegister(second))) {
 							x.setError(
@@ -180,6 +179,8 @@ void parser::valid_syntax(statement& x) {
 									+ " extra characters at end of statement,");
 				}
 			}else if (trim(operand).compare("*") == 0) {}
+			else if (assertRegex(operand, rlitral)) {}
+			else if (assertRegex(operand, rconstant)) {}
 			else {
 				x.setError(x.getError() + " invalid operand,");
 			}

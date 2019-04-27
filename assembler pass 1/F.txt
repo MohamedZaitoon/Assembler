@@ -1,0 +1,27 @@
+.23456789012345678901234567890123456
+.Read a two-digit number from device F3, 
+.convert this string to a number
+.and store the number in register A
+.Label.  Opcode  The  O p e r a n d 
+.
+         START   0
+         LDT     #2
+         LDA     #0
+         LDS     #0
+         LDX     #0
+.READ FROM DEVICE AND CONVERT
+READ     TD      INDEV
+         JEQ     READ
+         RD      INDEV
+         SUB     ZERO
+         ADDR    S,A
+         MUL     #10
+         RMO     A,S
+         TIXR    T
+         JLT     READ
+         RMO     S,A
+         DIV     #10
+         J       *
+INDEV    BYTE    X'F3'
+ZERO     BYTE    X'000030'  
+         END     

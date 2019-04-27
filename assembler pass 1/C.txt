@@ -1,0 +1,15 @@
+.23456789012345678901234567890123456
+.Clear a 100-byte string to all blanks
+.Label.  Opcode  The  O p e r a n d 
+.
+         START   0
+         LDT     #100
+         LDX     #0
+         LDCH    BLANK  
+LOOP     STCH    STR1,X
+         TIXR    T
+         JLT     LOOP
+         J       *
+STR1     RESB    100
+BLANK    BYTE    C' '
+         END     

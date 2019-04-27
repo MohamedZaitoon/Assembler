@@ -13,9 +13,9 @@
 
 	const regex rlitral("^[=]\\s*([cCxX])\\s*['](\\w+)[']\\s*$");
 
-	const regex rconstant("^s*([cCxX])\\s*['](\\w+)[']\\s*$");
+	const regex rconstant("^s*([cCxX])\\s*[']([\\S\\s]+)[']\\s*$");
 
-	const regex rlabel("(^\\s*[a-zA-Z][\\w]+)\\s*$");
+	const regex rlabel("(^\\s*[a-zA-Z][\\w]*)\\s*$");
 
 	const regex rexp("^\\s*([a-zA-Z][\\w]*|[\\d]+)\\s*([+*-\\/])"
 			"\\s*([a-zA-Z][\\w]*|[\\d]+)\\s*$");
