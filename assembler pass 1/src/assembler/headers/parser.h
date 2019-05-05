@@ -31,6 +31,7 @@
 			"(?:\\s+([^.]+)?\\s*)?"
 			"(?:\\s+(\\.[\\s\\S]+)?)?$");
 	const regex rwhite("^[^\\S]*$");
+	const regex rhex("^[\\da-fA-F]+$");
 
 class info {
 

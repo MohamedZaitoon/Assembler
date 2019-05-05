@@ -1,5 +1,6 @@
+#include "headers/statement.h"
+
 #include <string>
-#include "statement.h"
 
 statement::statement(string label,string mnemonic,string operand,string comment) {
 	this->label = label;

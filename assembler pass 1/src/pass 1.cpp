@@ -1,39 +1,33 @@
 #include <iostream>
-#include "assembler/assembler.h"
-#include "assembler/parser.h"
-#include <sstream>
-#include <vector>
-#include <iomanip>
-#include <stdio.h>
-#include <fstream>
-#include "assembler/statement.h"
+#include <regex>
+#include <string>
+
+#include "assembler/headers/assembler.h"
 
 using namespace std;
-regex r("^\\s*pass1\\s+([\\s\\S]+)$");
-void run(){
-	while(true){
-		string s;
-		cout<<">>>";
-		getline(cin,s);
-		//cout<<s<<endl;
-		smatch sm;
-		if(regex_match(s,sm,r)){
-			cout<<"file :"<<sm[1].str()<<endl;
-			if(!sm[1].str().empty()){
-				cout<<pass1(sm[1].str())<<endl;
-			}else{
-				cout<<"Empty path"<<endl;
-			}
-		}else{
-			cout<<"Invalid command or path"<<endl;
+regex r("^\\s*([\\w]+\\.[\\w]+)$");
+void evaluate(string s) {
+	smatch sm;
+	if (regex_match(s, sm, r)) {
+		cout << "file :" << sm[1].str() << endl;
+		if (!sm[1].str().empty()) {
+			cout << pass1(sm[1].str()) << endl;
+		} else {
+			cout << "Empty path" << endl;
 		}
+	} else {
+		cout << "Invalid command or path" << endl;
 	}
 }
-
-int main() {
-	run();
-	cout<<"end pass1";
+int main(int argc, char* argv[]) {
+	if (argc > 1) {
+		string s(argv[1]);
+		evaluate(s);
+	} else {
+		string s;
+		cin >> s;
+		evaluate(s);
+	}
 	return 0;
 }
-
 

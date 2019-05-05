@@ -1,10 +1,11 @@
-#include "parser.h"
+#include "headers/parser.h"
 #include <map>
 #include <string>
 #include <iostream>
 #include <regex>
-#include "assembler.h"
 #include <utility>
+
+#include "headers/assembler.h"
 using namespace std;
 parser::parser() {
 	load_optab();
@@ -139,10 +140,10 @@ void parser::valid_syntax(statement& x) {
 			smatch sm;
 			string operand = trim(x.getOperand());
 			if (regex_match(operand, sm, roperand)) {
-				string perfix = sm[1].str();
-				string first = to_upper(sm[2].str());
-				string comma = sm[3].str();
-				string second = to_upper(sm[4].str());
+				string perfix = trim(sm[1].str());
+				string first = trim(to_upper(sm[2].str()));
+				string comma = trim(sm[3].str());
+				string second = trim(to_upper(sm[4].str()));
 				int oprs = it->second.operands;
 				if (assertRegex(operand, rdig)
 						|| assertRegex(operand, rlabel)) {
@@ -191,7 +192,7 @@ void parser::valid_syntax(statement& x) {
 		it = this->derctivetab.find(op);
 		if (it != this->derctivetab.end()) {
 			if (!(assertRegex(oprnd, rdig) || assertRegex(oprnd, rlabel)
-					|| assertRegex(oprnd, rexp) || assertRegex(oprnd, rconstant)||assertRegex(oprnd,rwhite))) {
+					|| assertRegex(oprnd, rexp) || assertRegex(oprnd, rconstant)||assertRegex(oprnd,rwhite)||assertRegex(oprnd, rhex))) {
 				x.setError("Invalid operand ," + x.getError());
 			}
 		}

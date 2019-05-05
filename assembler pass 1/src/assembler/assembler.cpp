@@ -1,7 +1,8 @@
-#include "assembler.h"
+#include "headers/assembler.h"
+
 #include <fstream>
 #include <vector>
-#include "parser.h"
+#include "headers/parser.h"
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -9,7 +10,7 @@
 #include <map>
 #include <iomanip>
 
-#include "statement.h"
+#include "headers/statement.h"
 #define ll int
 
 using namespace std;
@@ -57,7 +58,7 @@ symbol temp(0, 0, 0, 0);
 
 string pass1(string path) {
 	symtab.clear();
-	useBase =false;
+	useBase = false;
 	cout << "reading file :" + path << ": " + read_file(path) << endl;
 	ofstream write;
 	write.open("LISTFILE.txt", ios::trunc);
@@ -76,23 +77,30 @@ string pass1(string path) {
 				string op = to_upper(ins.getMnemonic());
 				if (!ins.is_comment() && !op.compare("START")) { //must check label also
 					regex r("^[\\da-fA-F]+$");
-					writeListFile(write, ++lineno, locctr, ins);
+
 					if (regex_match(ins.getOperand(), r)) {
 						locctr = hex_to_dec(ins.getOperand());
+						writeListFile(write, ++lineno, locctr, ins);
+						if (ins.has_error())
+							writeError(write, ins.getError());
 					} else {
-						writeError(write, "invalid operand");
 						locctr = 0;
+						writeListFile(write, ++lineno, locctr, ins);
+						writeError(write, "invalid operand");
+
 						foundError = true;
 					}
 				} else if (ins.is_comment()) {
+					locctr = 0;
 					write << std::left << setw(jf) << "" << setw(jf) << ""
 							<< setw(jf) << ins.getComment() << endl;
-					locctr = 0;
+
 				} else {
-					writeListFile(write, ++lineno, locctr, ins);
-					if (!ins.has_error())
-						writeError(write, ins.getError());
 					locctr = 0;
+					writeListFile(write, ++lineno, locctr, ins);
+					if (ins.has_error())
+						writeError(write, ins.getError());
+
 				}
 				for (; i < siz; i++) {
 					if (regex_match(code_lines[i], rwhite))
@@ -245,6 +253,9 @@ void handleDerictive(statement& ins, string op, parser& p, string& error) {
 			if (!ins.has_error())
 				error += "Invalid operand,";
 		}
+		 if (!trim(ins.getLabel()).empty()) {
+					error+="label must be blank in this statement , ";
+		}
 	} else if (!op.compare("WORD")) {	//handle range
 		temp.address = locctr;
 		temp.length = 1;
@@ -385,7 +396,7 @@ void handleDerictive(statement& ins, string op, parser& p, string& error) {
 		}
 
 	} else if (!op.compare("LTORG")) {
-		//litralSetup();
+//litralSetup();
 	} else if (!op.compare("BASE")) {
 		useBase = true;
 		temp.address = locctr;
