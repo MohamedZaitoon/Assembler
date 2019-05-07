@@ -1,13 +1,12 @@
-#include "common.h"
+#include "headers/common.h"
 
 #include <algorithm>
 #include <cctype>
-#include <iomanip>
 #include <iterator>
 #include <sstream>
 #include <utility>
 
-#include "pass1.h"
+#include "headers/pass1.h"
 
 using namespace std;
 string strToHex(string s);

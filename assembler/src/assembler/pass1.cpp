@@ -1,4 +1,4 @@
-#include "pass1.h"
+#include "headers/pass1.h"
 
 #include <fstream>
 #include <initializer_list>
@@ -6,15 +6,13 @@
 #include <iostream>
 #include <regex>
 #include <sstream>
-#include <string>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
-
-#include "parser.h"
-#include "statement.h"
-#include "common.h"
+#include "headers/common.h"
+#include "headers/parser.h"
+#include "headers/statement.h"
 
 #define ll int
 

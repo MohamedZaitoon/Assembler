@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include "assembler/pass1.h"
+#include "assembler/headers/pass1.h"
 using namespace std;
 
 int main() {

@@ -1,5 +1,5 @@
-#ifndef ASSEMBLER_COMMON_H_
-#define ASSEMBLER_COMMON_H_
+#ifndef ASSEMBLER_HEADERS_COMMON_H_
+#define ASSEMBLER_HEADERS_COMMON_H_
 #define ll int
 #include <string>
 #include <vector>

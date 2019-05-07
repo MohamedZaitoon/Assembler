@@ -1,5 +1,5 @@
-#ifndef ASSEMBLER_PASS1_H_
-#define ASSEMBLER_PASS1_H_
+#ifndef ASSEMBLER_HEADERS_PASS1_H_
+#define ASSEMBLER_HEADERS_PASS1_H_
 using namespace std;
 #include <string>
 #define ll int

@@ -1,9 +1,10 @@
-#include "pass2.h"
+#include "headers/pass2.h"
+#include "headers/common.h"
 
+bool pass2() {
+	if(completePass1){
 
-bool pass2(){
-
-return false;
+	}
+	return false;
 }
-
 
