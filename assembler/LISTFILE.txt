@@ -1,0 +1,21 @@
+line no.  address   label     op-code   operand   comment   
+                    .23456789012345678901234567890123456
+0         000000    .Set ALPHA equal to the integer portion of BETA / GAMMA
+0         000000    .Label.  Opcode  The  O p e r a n d 
+0         000000    .         
+1         000000              LDA       BETA                
+2         000003              DIV       GAMMA               
+3         000006              STA       ALPHA               
+4         000009              J         *                   
+4         00000c    .         
+5         00000c    ALPHA     RESW      1                   
+6         00000f    BETA      RESW      1                   
+7         000012    GAMMA     RESW      1                   
+8         000015              END                           
+                    Symbol Table (value in decimal)
+
+          Name      Value     Reloc/Absol
+          
+          GAMMA     18        Relocatable
+          ALPHA     12        Relocatable
+          BETA      15        Relocatable

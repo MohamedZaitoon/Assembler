@@ -1,0 +1,17 @@
+START   0
+         LDA     BETA
+         MUL     =w'16'
+         MUL     =w'17'
+         MUL     =w'15'
+         MUL     =w'64'
+         ltorg
+         RMO     A,S
+         LDA     GAMMA
+         MUL     #3
+         ADDR    S,A
+         STA     ALPHA
+         J       *
+ALPHA    RESW    1
+BETA     RESW    1
+GAMMA    RESW    1
+         END     

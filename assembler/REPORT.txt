@@ -1,0 +1,29 @@
+line no.  address   label     op-code   operand   comment   
+1         000000              START     0                   
+2         000000              LDA       BETA                
+3         000003              MUL       =w'16'              
+4         000006              MUL       =w'17'              
+5         000009              MUL       =w'15'              
+6         00000c              MUL       =w'64'              
+7         00000f              ltorg                         
+          00000f    10        literal   ****      
+          000010    11        literal   ****      
+          000011    0f        literal   ****      
+          000012    40        literal   ****      
+8         000013              RMO       A,S                 
+9         000015              LDA       GAMMA               
+10        000018              MUL       #3                  
+11        00001b              ADDR      S,A                 
+12        00001d              STA       ALPHA               
+13        000020              J         *                   
+14        000023    ALPHA     RESW      1                   
+15        000026    BETA      RESW      1                   
+16        000029    GAMMA     RESW      1                   
+17        00002c              END                           
+                    Symbol Table (value in decimal)
+
+          Name      Value     Reloc/Absol
+          
+          GAMMA     41        Relocatable
+          ALPHA     35        Relocatable
+          BETA      38        Relocatable
