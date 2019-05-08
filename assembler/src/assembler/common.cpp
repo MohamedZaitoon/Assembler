@@ -1,11 +1,12 @@
 #include "headers/common.h"
 
+#include <iostream>
 #include <algorithm>
 #include <cctype>
 #include <iterator>
 #include <sstream>
 #include <utility>
-
+#include <iomanip>
 #include "headers/pass1.h"
 
 using namespace std;
@@ -168,17 +169,19 @@ void load_tabels() {
 /*
  * convert litral value to hex value
  */
-string valueOfLitral(string s){
+string valueOfLitral(string s,string& type){
 	s = trim(s);
 	string value = "";
 	smatch sm;
 	if(regex_match(s, sm,word)){
-		value = sm[2].str();
-		value = decToHex(value);
-		if(value.size()%2 == 1)value="0"+value;
+		type = "W";
+		value = adjustString(to_int(sm[2].str()),6);
+		value = value.substr(value.size()-6,6);
 	}else if(regex_match(s, sm, chars)){
+		type ="C";
 		value = strToHex(sm[2].str());
 	}else if(regex_match(s, sm, rlhex)){
+		type="X";
 		value =sm[2].str();
 	}
 	return value;
@@ -193,4 +196,10 @@ string strToHex(string s){
 		value += dec_to_hex(x);
 	}
 	return value;
+}
+string adjustString(ll value, ll adj) {
+	stringstream s;
+	s << setfill('0') << setw(adj) << ::hex << value;
+	cout << value << " ====>>" << s.str() << endl;
+	return s.str();
 }

@@ -94,12 +94,13 @@ void load_tabels();
 void load_optab();
 void load_register_tab();
 void load_derictve();
-string valueOfLitral(string s);
+string valueOfLitral(string s,string& type);
 
 string trim(const string& str);
 string to_upper(string s);
 string to_string(int d);
 string strToHex(string s);
+string adjustString(ll value, ll adj);
 
 template<typename T>
 ll hex_to_dec(T h);

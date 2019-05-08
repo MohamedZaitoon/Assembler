@@ -22,7 +22,6 @@ void writeReport(ofstream& w, X& item);
 void writeErrorP2(ofstream& w, string error);
 
 void calculateObcode(X& item, string& error, string& op);
-string adjustString(ll value, ll adj);
 
 string toHexValue(string c);
 string toBinValue(char c);
@@ -38,6 +37,8 @@ bool enableBase = false;
 string labelBase;
 
 bool ero = false;
+
+ll cnt = 0;
 
 ll pc;
 ll br;
@@ -70,7 +71,7 @@ bool pass2() {
 				break; //need handle
 			curloc = item.locctr;
 			pc = intermediate[i + 1].locctr;
-			cout<<"operand in pass2()  =>"<<op<<endl;
+			cout << "operand in pass2()  =>" << op << endl;
 			if (optab.find(op) != optab.end()) {
 				calculateObcode(item, error, op);
 			} else if (!op.compare("WORD")) {
@@ -92,16 +93,20 @@ bool pass2() {
 				enableBase = false;
 			}
 			if (item.obcode.size() != 0) {
-				if (!(textRec.size() + item.obcode.size() <= maxLen)) {
+				if (!(textRec.size() + item.obcode.size() - cnt <= maxLen)) {
 					//handle last text record in file later
-					cout<<"test record length: "<<textRec.size()/2<<endl;
-					textRec = adjustString(textRec.size()/2, 2) +"^"+ textRec;
+					cout << "test record length: " << textRec.size() / 2
+							<< endl;
+					textRec = adjustString((textRec.size()-cnt) / 2, 2)
+							+ textRec;
 					wof << textRec << endl;
 					initTextRec(wof, curloc);
 					textRec = "";
-					cout<<"text record => "<<i<<" =>"<<textRec<<endl;
+					cnt = 0;
+					cout << "text record => " << i << " =>" << textRec << endl;
 				}
-				textRec +=item.obcode;
+				cnt++;
+				textRec += "^" + item.obcode;
 			}
 			writeReport(wreport, item);
 			if (!error.empty()) {
@@ -111,7 +116,7 @@ bool pass2() {
 
 		}
 		//write last text record
-		textRec = adjustString(textRec.size(), 2) + textRec;
+		textRec = adjustString((textRec.size()-cnt) / 2, 2) + textRec;
 		wof << textRec << endl;
 		//write end record
 		wof << "E" << adjustString(startadrs, 6) << endl;
@@ -134,16 +139,18 @@ bool pass2() {
 	return false;
 }
 void calculateObcode(X& item, string& error, string& op) {
-	string operand = to_upper(item.stat.getOperand());cout<<"operand in calculate()  =>"<<operand<<endl;
+	string operand = to_upper(item.stat.getOperand());
+	cout << "operand in calculate()  =>" << operand << endl;
 	info opinfo = optab.find(op)->second;
-	string opcode = opinfo.opcode;cout<<"opcode in calculate()  =>"<<opcode<<endl;
-	string obcode = opcode.substr(0,1);
+	string opcode = opinfo.opcode;
+	cout << "opcode in calculate()  =>" << opcode << endl;
+	string obcode = opcode.substr(0, 1);
 	bool n, i, x, b, p, e;
 	string dis;
 	ll adrs;
 	smatch sm;
 	if (opinfo.operands == 2) {
-		obcode += opcode.substr(1,1);
+		obcode += opcode.substr(1, 1);
 		if (regex_match(operand, sm, r2operand)) {
 			string first = sm[1].str();
 			string second = sm[2].str();
@@ -194,6 +201,8 @@ void calculateObcode(X& item, string& error, string& op) {
 				adrs = curloc;
 			} else if (regex_match(oprnd, rdig)) {
 				adrs = to_int(sm[1].str());
+				b=p=0;
+				dis = dec_to_hex(adrs);
 			} else {
 				auto sy = symtab.find(oprnd);
 				if (sy != symtab.end()) {
@@ -225,23 +234,29 @@ void calculateObcode(X& item, string& error, string& op) {
 			string literal = sm[1].str() + "'" + c + "'";
 			Literal l = searchLiteral(literal);
 			if (!l.literal.empty()) {
-				adrs = l.address;cout<<adrs<<endl;
+				adrs = l.address;
+				cout << adrs << endl;
 			} else {
 				cout << "failed to find literal" << endl;
 			}
 		}
-		cout<<"target address "<<adrs<<endl;
+		cout << "target address " << adrs << endl;
+
 		if (item.stat.isFormate4()) {
 			e = 1;
 			p = b = 0;
 			dis = dec_to_hex(adrs);
+		} else if (((i & !n) || (i & !n)) && !dis.empty()) {
+
 		} else {
 			e = 0;
-			ll disp = adrs - pc;cout<<"Displacement "<<disp<<endl;
+			ll disp = adrs - pc;
+			cout << "Displacement " << disp << endl;
 			if (disp < 2048 && disp >= -2048) {
 				p = 1;
 				b = 0;
-				dis = dec_to_hex(disp);cout<<"displacement in hex "<<dis<<endl;
+				dis = dec_to_hex(disp);
+				cout << "displacement in hex " << dis << endl;
 			} else if (enableBase) {
 				disp = adrs - br;
 				if (disp > 0 && disp < 4096) {
@@ -274,21 +289,27 @@ void calculateObcode(X& item, string& error, string& op) {
 		} else {
 			ss << setfill('0') << setw(6) << dis;
 			temp = ss.str();
-			temp = temp.substr(3,1) + temp.substr(4,1) + temp.substr(5,1);
+			int sz = temp.size();
+			temp = temp.substr(sz - 3, 1) + temp.substr(sz - 2, 1)
+					+ temp.substr(sz - 1, 1);
 		}
 		string c2 = toBinValue(opcode[1]);
-		c2[2]=('0' + n); c2[3]=('0' + i);
-		cout<<"c2 => "<<c2<<endl;
+		c2[2] = ('0' + n);
+		c2[3] = ('0' + i);
+		cout << "c2 => " << c2 << endl;
 		c2 = toHexValue(c2);
-		cout<<"c2 hex => "<<c2<<endl;
+		cout << "c2 hex => " << c2 << endl;
 		string c3 = "0000";
-		c3[0]= ('0' + x);c3[1]= ('0' + b) ;c3[2]= ('0' + p) ;c3[3]= ('0' + e);
-		cout<<"c3 => "<<c3<<endl;
+		c3[0] = ('0' + x);
+		c3[1] = ('0' + b);
+		c3[2] = ('0' + p);
+		c3[3] = ('0' + e);
+		cout << "c3 => " << c3 << endl;
 		c3 = toHexValue(c3);
-		cout<<"c3 hex=> "<<c3<<endl;
-		obcode += c2 + c3+temp;
-		cout<<"temp =>" <<temp<<endl;
-		cout<<"object code  => "<<obcode<<endl;
+		cout << "c3 hex=> " << c3 << endl;
+		obcode += c2 + c3 + temp;
+		cout << "temp =>" << temp << endl;
+		cout << "object code  => " << obcode << endl;
 		item.obcode = obcode;
 	}
 }
@@ -308,12 +329,7 @@ void initTextRec(ofstream& w, ll locctr) {
  * convert value to hex with 6 digits
  *  ex. 15 =>   00000f
  */
-string adjustString(ll value, ll adj) {
-	stringstream s;
-	s << setfill('0') << setw(adj) << ::hex << value;
-	cout<<value<<" ====>>"<<s.str()<<endl;
-	return s.str();
-}
+
 
 void wirteInitialLinep2(ofstream& w) {
 	w << endl << endl << setw(40) << "# Pass 2 #" << endl;
@@ -344,7 +360,7 @@ Literal searchLiteral(string lit) {
 			return l;
 		}
 	}
-	Literal dummy("","",0,0);
+	Literal dummy("", "", 0, 0);
 	return dummy;
 }
 

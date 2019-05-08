@@ -130,11 +130,17 @@ string pass1(string path) {
 								if (ins.isLitral()) {
 									string lit = ins.getOperand();
 									if (validLitral(lit, error)) {
-										string value = valueOfLitral(ins.getOperand());
-										Literal l(lit,value,value.size()/2,-1);
+										string type;
+										int length;
+										string value = valueOfLitral(ins.getOperand(),type);
+										if(type == "W"){
+											length = 3;
+										}else {
+											length = value.size()/2;
+										}
+										Literal l(lit,value,length,-1);
 
 										addToLittab(l);
-										cout<<littab[littab.size()-1].literal<<"---"<<lit<<endl;
 									}
 								}
 							}
@@ -193,8 +199,8 @@ string pass1(string path) {
 				//write last line in intermediate file
 				//save locctr - starting adrs as prog len
 				statement dumy;
-				dumy.setLitral("LTORG");
-				setLitral(ins,write);
+				dumy.setMnemonic("LTORG");
+				setLitral(dumy,write);
 				len = locctr - startaddrs-1;
 			} else {
 				write.close();

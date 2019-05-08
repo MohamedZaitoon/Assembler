@@ -1,56 +1,52 @@
 line no.  address   label     op-code   operand   comment   
-1         00000a              START     A                   
-2         00000a              LDA       BETA                
-3         00000d              MUL       =w'16'              
-4         000010              MUL       =w'17'              
-5         000013              MUL       =w'15'              
-6         000016              MUL       =w'64'              
-7         000019              ltorg                         
-          000019    10        literal   w'16'     
-          00001a    11        literal   w'17'     
-          00001b    0f        literal   w'15'     
-          00001c    40        literal   w'64'     
-8         00001d              RMO       A,S                 
-9         00001f              LDA       A                   
-10        000022              MUL       #3                  
-11        000025              ADDR      S,A                 
-12        000027              STA       ALPHA               
-13        00002a              J         *                   
-14        00002d    ALPHA     RESW      1                   
-15        000030    BETA      RESW      1                   
-16        000033    GAMMA     RESW      1                   
-17        000036              END                           
-                    Symbol Table (value in decimal)
-
-          Name      Value     Reloc/Absol
-          
-          GAMMA     51        Relocatable
-          ALPHA     45        Relocatable
-          BETA      48        Relocatable
-
-
-                              # Pass 2 #
-LC        obcode    Label     Mnemonic  operand   
-00000a                        START     A         
-00000d    032020              LDA       BETA      
-000010    202006              MUL       =w'16'    
-000013    202004              MUL       =w'17'    
-000016    202002              MUL       =w'15'    
-000019    202003              MUL       =w'64'    
-000019                        ltorg               
-000019    10        Literal   =>        w'16'     
-00001a    11        Literal   =>        w'17'     
-00001b    0f        Literal   =>        w'15'     
-00001c    40        Literal   =>        w'64'     
-00001f    AC04                RMO       A,S       
-000022                        LDA       A         
-***Error: undefined symbol in operand
-000025    222fff              MUL       #3        
-000027    9040                ADDR      S,A       
-00002a    0F2000              STA       ALPHA     
-00002d    3F2fff              J         *         
-000030              ALPHA     RESW      1         
-000033              BETA      RESW      1         
-000036              GAMMA     RESW      1         
-000036                        END                 
-***Error: extera statement after end statement
+1         000000    COPY      START     0                   
+2         000000    FIRST     STL       RETADR              
+3         000003    CLOOP     LDB       #LENGTH             
+4         000006              BASE      LENGTH              
+5         000006              +JSUB     RDREC               
+6         00000a              LDA       LENGTH              
+7         00000d              COMP      #0                  
+8         000010              JEQ       ENDFIL              
+9         000013              +JSUB     WRREC               
+10        000017              J         CLOOP               
+11        00001a    ENDFIL    LDA       EOF                 
+12        00001d              STA       BUFFER              
+13        000020              LDA       #3                  
+14        000023              STA       LENGTH              
+15        000026              +JSUB     WRREC               
+16        00002a              J         @RETADR             
+17        00002d    EOF       BYTE      C’EOF’          
+***Error: Invalid operand ,, 
+18        00002d    RETADR    RESW      1                   
+19        000030    LENGTH    RESW      1                   
+20        000033    BUFFER    RESB                          
+***Error: , Invalid operand,
+21        000033    RDREC     CLEAR     X                   
+22        000035              CLEAR     A                   
+23        000037              CLEAR     S                   
+24        000039              +LDT      #4096               
+25        00003d    RLOOP     TD        INPUT               
+26        000040              JEQ       RLOOP               
+27        000043              TD        INPUT               
+28        000046              COMPR     A,S                 
+29        000048              JEQ       EXIT                
+30        00004b              STCH      BUFFER,X            
+31        00004e              TIXR      T                   
+32        000050              JLT       RLOOP               
+33        000053    EXIT      STX       LENGTH              
+34        000056              RSUB                          
+35        000059    INPUT     BYTE      X’F1’           
+***Error: Invalid operand ,, 
+36        000059    WRREC     CLEAR     X                   
+37        00005b              LDT       LENGTH              
+38        00005e    WLOOP     TD        OUTPUT              
+39        000061              JEQ       WLOOP               
+40        000064              LDCH      BUFFER,X            
+41        000067              WD        OUTPUT              
+42        00006a              TIXR      T                   
+43        00006c              JLT       WLOOP               
+44        00006f              RSUB                          
+45        000072    OUTPUT    BYTE      X’05’           
+***Error: Invalid operand ,, 
+46        000072              END       FIRST               
+***Error: operand field must be blank for this statement 
