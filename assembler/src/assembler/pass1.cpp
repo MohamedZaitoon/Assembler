@@ -75,8 +75,7 @@ string pass1(string path) {
 						foundError = true;
 					}
 
-					X item(locctr, ins.getLabel(), ins.getMnemonic(),
-							ins.getOperand());
+					X item(locctr, ins,"");
 					//addToIntermediate(item);
 					intermediate.push_back(item);
 				} else if (ins.is_comment()) {
@@ -90,8 +89,7 @@ string pass1(string path) {
 					if (ins.has_error())
 						writeError(write, ins.getError());
 
-					X item(locctr, ins.getLabel(), ins.getMnemonic(),
-							ins.getOperand());
+					X item(locctr, ins,"");
 					//addToIntermediate(item);
 					intermediate.push_back(item);
 				}
@@ -136,7 +134,7 @@ string pass1(string path) {
 										Literal l(lit,value,value.size()/2,-1);
 
 										addToLittab(l);
-										cout<<littab[littab.size()-1].length<<endl;
+										cout<<littab[littab.size()-1].literal<<"---"<<lit<<endl;
 									}
 								}
 							}
@@ -156,13 +154,13 @@ string pass1(string path) {
 
 						if (ins.has_label()) {
 							//search in symbol table for error
-							auto it = symtab.find(ins.getLabel());
+							auto it = symtab.find(to_upper(ins.getLabel()));
 							if (it == symtab.end()) {
 								//******* handle symbol arguments
 								//add to smbol table (label , locct)
 								symbol s(temp.address, temp.length, temp.type,
 										temp.addressType);
-								symtab.insert(make_pair(ins.getLabel(), s)); // @suppress("Invalid arguments")
+								symtab.insert(make_pair(to_upper(ins.getLabel()), s)); // @suppress("Invalid arguments")
 
 							} else {
 								error += "Symbol '" + ins.getLabel()
@@ -174,8 +172,7 @@ string pass1(string path) {
 							foundError = true;
 							writeError(write, ins.getError() + ", " + error);
 						}
-						X item(locctr, ins.getLabel(), ins.getMnemonic(),
-								ins.getOperand());
+						X item(locctr, ins,"");
 						//addToIntermediate(item);
 						intermediate.push_back(item);
 						//set litrals on output file
@@ -198,7 +195,7 @@ string pass1(string path) {
 				statement dumy;
 				dumy.setLitral("LTORG");
 				setLitral(ins,write);
-				len = locctr - startaddrs;
+				len = locctr - startaddrs-1;
 			} else {
 				write.close();
 				return "This file is Empty";
@@ -239,7 +236,7 @@ string read_file(string path) {
 }
 
 void handleDerictive(statement& ins, string op, parser& p, string& error) {
-	string oprnd = trim(ins.getOperand());
+	string oprnd = to_upper(trim(ins.getOperand()));
 	if (!op.compare("START")) {
 		temp.address = locctr;
 		temp.length = 0;
@@ -282,7 +279,7 @@ void handleDerictive(statement& ins, string op, parser& p, string& error) {
 		temp.addressType = temp.reloc;
 		locctr += 3;
 		if (p.assertRegex(oprnd, rdig)) {
-			if (oprnd.size() > 4)
+			if (oprnd.size() > 5)
 				error += "4 digits at most";
 		} else if (p.assertRegex(oprnd, rlabel)) {
 			if (symtab.find(oprnd) == symtab.end())
@@ -542,10 +539,14 @@ void setLitral(statement& ins,ofstream& write){
 	while(i < sz){
 		stringstream s;
 		littab[i].address = locctr;
+		statement st("Literal","=>",littab[i].literal,"");
+		X item(locctr, st,littab[i].value);
+		//addToIntermediate(item);
+		intermediate.push_back(item);
 		s << setfill('0') << setw(6) << dec_to_hex(locctr);
 		write << std::left << setw(jf) << "" << setw(jf) << s.str() << setw(jf)
 						<<littab[i].value << setw(jf) << "literal"
-						<< setw(jf) << "****"<<endl;
+						<< setw(jf) << littab[i].literal<<endl;
 		locctr+=littab[i].length;
 		i++;
 	}

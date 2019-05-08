@@ -1,19 +1,18 @@
 #include <iostream>
-#include <sstream>
 #include <string>
+
 #include "assembler/headers/pass1.h"
+#include "assembler/headers/pass2.h"
+
 using namespace std;
 
 int main() {
-	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
-	cout<<std::hex<<"16"<<endl;
-	std::string str("123");
-	stringstream s;
-	  int n = std::stoi(str);
-//
-	  std::cout << str << " --> " << n <<endl;
-//	  int c = 'd';
-//	  cout<<c<<endl;
+//	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
+//	cout<<std::hex<<"16"<<endl;
+//	std::string str("123");
+//	  int n = std::stoi(str);
+
 	 cout<<pass1("A.txt")<<endl;
+	 pass2();
 	return 0;
 }

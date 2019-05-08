@@ -1,5 +1,8 @@
 #ifndef ASSEMBLER_HEADERS_COMMON_H_
 #define ASSEMBLER_HEADERS_COMMON_H_
+
+#include "statement.h"
+
 #define ll int
 #include <string>
 #include <vector>
@@ -24,18 +27,17 @@ public:
 class X {
 public:
 	ll locctr;
-	string label;
-	string mnemonic;
-	string operand;
+	statement stat;
+	string obcode;
+
 	X() :
-			locctr(0), label(""), mnemonic(""), operand("") {
+			locctr(0), stat(),obcode("") {
 
 	}
-	X(ll locctr, string label, string mnemonic, string operand) {
+	X(ll locctr, statement& stat,string obcode) {
 		this->locctr = locctr;
-		this->label = label;
-		this->mnemonic = mnemonic;
-		this->operand = operand;
+		this->stat = stat;
+		this->obcode = obcode;
 	}
 };
 
@@ -97,6 +99,7 @@ string valueOfLitral(string s);
 string trim(const string& str);
 string to_upper(string s);
 string to_string(int d);
+string strToHex(string s);
 
 template<typename T>
 ll hex_to_dec(T h);

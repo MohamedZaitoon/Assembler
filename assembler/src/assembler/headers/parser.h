@@ -21,11 +21,11 @@
 	const regex rexp("^\\s*([a-zA-Z][\\w]*|[\\d]+)\\s*([+*-\\/])"
 			"\\s*([a-zA-Z][\\w]*|[\\d]+)\\s*$");
 
-	const regex rdig("^\\s*\\d+\\s*$");
+	const regex rdig("^\\s*[-]?(\\d+)\\s*$");
 
 	const regex r2operand("^\\s*([a-zA-Z][\\w]*|[\\d]+)\\s*[,]\\s*([a-zA-Z][\\w]*|[\\d]+)\\s*$");
 
-	const regex rimmd_ind("^\\s*[#@]\\s*([a-zA-Z][\\w]*|[\\d]+|[*])\\s*$");
+	const regex rimmd_ind("^\\s*([#@])\\s*([a-zA-Z][\\w]*|[\\d]+|[*])\\s*$");
 
 	const regex rinstruction("^\\s*(?:(\\S+)?\\s+)?"
 			"(\\s*[+]?[\\w]+)\\s*"

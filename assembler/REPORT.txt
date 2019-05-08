@@ -1,29 +1,56 @@
 line no.  address   label     op-code   operand   comment   
-1         000000              START     0                   
-2         000000              LDA       BETA                
-3         000003              MUL       =w'16'              
-4         000006              MUL       =w'17'              
-5         000009              MUL       =w'15'              
-6         00000c              MUL       =w'64'              
-7         00000f              ltorg                         
-          00000f    10        literal   ****      
-          000010    11        literal   ****      
-          000011    0f        literal   ****      
-          000012    40        literal   ****      
-8         000013              RMO       A,S                 
-9         000015              LDA       GAMMA               
-10        000018              MUL       #3                  
-11        00001b              ADDR      S,A                 
-12        00001d              STA       ALPHA               
-13        000020              J         *                   
-14        000023    ALPHA     RESW      1                   
-15        000026    BETA      RESW      1                   
-16        000029    GAMMA     RESW      1                   
-17        00002c              END                           
+1         00000a              START     A                   
+2         00000a              LDA       BETA                
+3         00000d              MUL       =w'16'              
+4         000010              MUL       =w'17'              
+5         000013              MUL       =w'15'              
+6         000016              MUL       =w'64'              
+7         000019              ltorg                         
+          000019    10        literal   w'16'     
+          00001a    11        literal   w'17'     
+          00001b    0f        literal   w'15'     
+          00001c    40        literal   w'64'     
+8         00001d              RMO       A,S                 
+9         00001f              LDA       A                   
+10        000022              MUL       #3                  
+11        000025              ADDR      S,A                 
+12        000027              STA       ALPHA               
+13        00002a              J         *                   
+14        00002d    ALPHA     RESW      1                   
+15        000030    BETA      RESW      1                   
+16        000033    GAMMA     RESW      1                   
+17        000036              END                           
                     Symbol Table (value in decimal)
 
           Name      Value     Reloc/Absol
           
-          GAMMA     41        Relocatable
-          ALPHA     35        Relocatable
-          BETA      38        Relocatable
+          GAMMA     51        Relocatable
+          ALPHA     45        Relocatable
+          BETA      48        Relocatable
+
+
+                              # Pass 2 #
+LC        obcode    Label     Mnemonic  operand   
+00000a                        START     A         
+00000d    032020              LDA       BETA      
+000010    202006              MUL       =w'16'    
+000013    202004              MUL       =w'17'    
+000016    202002              MUL       =w'15'    
+000019    202003              MUL       =w'64'    
+000019                        ltorg               
+000019    10        Literal   =>        w'16'     
+00001a    11        Literal   =>        w'17'     
+00001b    0f        Literal   =>        w'15'     
+00001c    40        Literal   =>        w'64'     
+00001f    AC04                RMO       A,S       
+000022                        LDA       A         
+***Error: undefined symbol in operand
+000025    222fff              MUL       #3        
+000027    9040                ADDR      S,A       
+00002a    0F2000              STA       ALPHA     
+00002d    3F2fff              J         *         
+000030              ALPHA     RESW      1         
+000033              BETA      RESW      1         
+000036              GAMMA     RESW      1         
+000036                        END                 
+***Error: extera statement after end statement

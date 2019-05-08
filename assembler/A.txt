@@ -1,4 +1,4 @@
-START   0
+START   A
          LDA     BETA
          MUL     =w'16'
          MUL     =w'17'
@@ -6,7 +6,7 @@ START   0
          MUL     =w'64'
          ltorg
          RMO     A,S
-         LDA     GAMMA
+         LDA     A
          MUL     #3
          ADDR    S,A
          STA     ALPHA

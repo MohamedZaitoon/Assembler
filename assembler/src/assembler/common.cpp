@@ -40,7 +40,8 @@ string trim(const string& str) {
 
 	return str.substr(strBegin, strRange);
 }
-string decToHex(string d) {
+template<typename T>
+string decToHex(T d) {
 	stringstream ss;
 	ss << std::hex << to_int(d);
 	return ss.str();
@@ -182,7 +183,9 @@ string valueOfLitral(string s){
 	}
 	return value;
 }
-
+/**
+ * convert string to equivalent  hex value
+ */
 string strToHex(string s){
 	string value = "";
 	for(char c : s){
