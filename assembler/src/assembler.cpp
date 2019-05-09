@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
 		string s(argv[1]);
 		evaluate(s);
 	} else {
-		string s;
+		string s("A.txt");
 		cin >> s;
 		evaluate(s);
 	}

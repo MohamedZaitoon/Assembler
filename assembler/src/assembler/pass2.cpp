@@ -195,7 +195,7 @@ void calculateObcode(X& item, string& error, string& op) {
 			adrs = result;
 			n = i = 1;
 			x = 0;
-			if (type == symbol().absol) {
+			if (type == true) {// true means absol
 				b = p = 0;
 				dis = dec_to_hex(adrs);
 			}
@@ -275,6 +275,9 @@ void calculateObcode(X& item, string& error, string& op) {
 			p = b = 0;
 			dis = dec_to_hex(adrs);
 		} else if (((i & !n) || (!i & n)) && !dis.empty()) {
+			e = 0;
+			p = b = 0;
+		}else if (!dis.empty()) {
 			e = 0;
 			p = b = 0;
 		} else {

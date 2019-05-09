@@ -585,12 +585,14 @@ void setLitral(statement& ins, ofstream& write) {
 }
 
 ll calculate(string a, string b, string op, string& error, ll curloc,
-		bool type) {
+		bool& type) {
 	bool ta, tb;
 	ll valueA, valueB;
 	getValue(a, valueA, ta, error, curloc);
 	getValue(b, valueB, tb, error, curloc);
-	if (!error.empty()) {
+	cout<<a<<" "<<valueA<<" "<<ta<<endl;
+	cout<<b<<" "<<valueB<<" "<<tb<<endl;
+	if (error.empty()) {
 		if (!op.compare("+")) {
 			if ((ta == temp.absol && (tb == temp.reloc || tb == temp.absol))
 					|| (tb == temp.absol
@@ -633,7 +635,7 @@ void getValue(string x, ll& value, bool& ta, string& error, ll curloc) {
 	if (regex_match(x, rdig)) {
 		ta = temp.absol;
 		value = to_int(x);
-	} else if (x.compare("*")) {
+	} else if (!x.compare("*")) {
 		ta = temp.reloc;
 		value = curloc;
 	} else {
@@ -643,7 +645,9 @@ void getValue(string x, ll& value, bool& ta, string& error, ll curloc) {
 			symbol sy = it->second;
 			ta = sy.addressType;
 			value = sy.address;
+			cout<<x<<" "<<value<<endl;
 		} else {
+			value = -1;
 			error += x + " undefined symbol, ";
 		}
 	}

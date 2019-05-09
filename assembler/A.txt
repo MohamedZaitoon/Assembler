@@ -1,5 +1,5 @@
 START   A
-         LDA     BETA
+         LDA     5+5
          MUL     =w'16'
          MUL     =w'17'
          MUL     =w'15'
@@ -14,6 +14,6 @@ START   A
 ALPHA    RESW    1
 BETA     RESW    1
 GAMMA    RESW    1
-mo       equ     5
+mo       equ     5*5
 moo      equ     beta+5
          END     

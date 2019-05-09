@@ -6,7 +6,7 @@ using namespace std;
 string pass1(string);
 
 ll calculate(string a, string b, string op, string& error, ll curloc,
-		bool type);
+		bool& type);
 void getValue(string x, ll& value, bool& ta, string& error, ll curloc);
 
 template<typename T>

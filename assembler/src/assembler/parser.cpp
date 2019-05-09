@@ -133,8 +133,9 @@ void parser::valid_syntax(statement& x) {
 	if (it != optab.end()) {
 		if (!trim(x.getOperand()).empty()) { //operand validation
 			smatch sm;
-			string operand = trim(x.getOperand());
-			if (regex_match(operand, sm, roperand)) {
+			string operand = x.getOperand();
+			if (assertRegex(operand, rexp)) {
+			} else if (regex_match(operand, sm, roperand)) {
 				string perfix = trim(sm[1].str());
 				string first = trim(to_upper(sm[2].str()));
 				string comma = trim(sm[3].str());
@@ -177,7 +178,6 @@ void parser::valid_syntax(statement& x) {
 			} else if (assertRegex(operand, rlitral)) {
 				x.setLitral(true);
 			} else if (assertRegex(operand, rconstant)) {
-			}else if (assertRegex(operand, rexp)) {
 			} else {
 				x.setError(x.getError() + " invalid operand,");
 			}

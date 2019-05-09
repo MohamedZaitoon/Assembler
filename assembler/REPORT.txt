@@ -1,6 +1,6 @@
 line no.  address   label     op-code   operand   comment   
 1         00000a              START     A                   
-2         00000a              LDA       BETA                
+2         00000a              LDA       5+5                 
 3         00000d              MUL       =w'16'              
 4         000010              MUL       =w'17'              
 5         000013              MUL       =w'15'              
@@ -19,24 +19,24 @@ line no.  address   label     op-code   operand   comment
 14        000035    ALPHA     RESW      1                   
 15        000038    BETA      RESW      1                   
 16        00003b    GAMMA     RESW      1                   
-17        00003e    mo        equ       5                   
-18        00003e    moo       equ       beta - alpha          
+17        00003e    mo        equ       5*5                 
+18        00003e    moo       equ       beta+5              
 19        00003e              END                           
                     Symbol Table (value in decimal)
 
           Name      Value     Reloc/Absol
           
           GAMMA     59        Relocatable
-          MO        5         Absolute  
+          MO        25        Absolute  
           ALPHA     53        Relocatable
-          MOO       -1        Relocatable
+          MOO       61        Relocatable
           BETA      56        Relocatable
 
 
                               # Pass 2 #
 LC        obcode    Label     Mnemonic  operand   
 00000a                        START     A         
-00000a    03202b              LDA       BETA      
+00000a    03000a              LDA       5+5       
 00000d    202009              MUL       =w'16'    
 000010    202009              MUL       =w'17'    
 000013    202009              MUL       =w'15'    
@@ -55,6 +55,6 @@ LC        obcode    Label     Mnemonic  operand
 000035              ALPHA     RESW      1         
 000038              BETA      RESW      1         
 00003b              GAMMA     RESW      1         
-00003e              mo        equ       5         
-00003e              moo       equ       beta - alpha
+00003e              mo        equ       5*5       
+00003e              moo       equ       beta+5    
 00003e                        END                 
