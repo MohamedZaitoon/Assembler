@@ -200,6 +200,5 @@ string strToHex(string s){
 string adjustString(ll value, ll adj) {
 	stringstream s;
 	s << setfill('0') << setw(adj) << ::hex << value;
-	cout << value << " ====>>" << s.str() << endl;
 	return s.str();
 }

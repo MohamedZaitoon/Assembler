@@ -71,7 +71,7 @@ bool pass2() {
 				break; //need handle
 			curloc = item.locctr;
 			pc = intermediate[i + 1].locctr;
-			cout << "operand in pass2()  =>" << op << endl;
+			//cout << "operand in pass2()  =>" << op << endl;
 			if (optab.find(op) != optab.end()) {
 				calculateObcode(item, error, op);
 			} else if (!op.compare("WORD")) {
@@ -95,15 +95,14 @@ bool pass2() {
 			if (item.obcode.size() != 0) {
 				if (!(textRec.size() + item.obcode.size() - cnt <= maxLen)) {
 					//handle last text record in file later
-					cout << "test record length: " << textRec.size() / 2
-							<< endl;
+					//cout << "test record length: " << textRec.size() / 2<< endl;
 					textRec = adjustString((textRec.size() - cnt) / 2, 2)
 							+ textRec;
 					wof << textRec << endl;
 					initTextRec(wof, curloc);
 					textRec = "";
 					cnt = 0;
-					cout << "text record => " << i << " =>" << textRec << endl;
+					//cout << "text record => " << i << " =>" << textRec << endl;
 				}
 				cnt++;
 				textRec += "^" + item.obcode;
@@ -140,10 +139,10 @@ bool pass2() {
 }
 void calculateObcode(X& item, string& error, string& op) {
 	string operand = to_upper(item.stat.getOperand());
-	cout << "operand in calculate()  =>" << operand << endl;
+	//cout << "operand in calculate()  =>" << operand << endl;
 	info opinfo = optab.find(op)->second;
 	string opcode = opinfo.opcode;
-	cout << "opcode in calculate()  =>" << opcode << endl;
+	//cout << "opcode in calculate()  =>" << opcode << endl;
 	string obcode = opcode.substr(0, 1);
 	bool n, i, x, b, p, e;
 	string dis;
@@ -263,12 +262,12 @@ void calculateObcode(X& item, string& error, string& op) {
 			Literal l = searchLiteral(literal);
 			if (!l.literal.empty()) {
 				adrs = l.address;
-				cout << adrs << endl;
+				//cout << adrs << endl;
 			} else {
 				cout << "failed to find literal" << endl;
 			}
 		}
-		cout << "target address " << adrs << endl;
+		//cout << "target address " << adrs << endl;
 
 		if (item.stat.isFormate4()) {
 			e = 1;
@@ -283,12 +282,12 @@ void calculateObcode(X& item, string& error, string& op) {
 		} else {
 			e = 0;
 			ll disp = adrs - pc;
-			cout << "Displacement " << disp << endl;
+			//cout << "Displacement " << disp << endl;
 			if (disp < 2048 && disp >= -2048) {
 				p = 1;
 				b = 0;
 				dis = dec_to_hex(disp);
-				cout << "displacement in hex " << dis << endl;
+				//cout << "displacement in hex " << dis << endl;
 			} else if (enableBase) {
 				p = 0;
 				b = 1;
@@ -329,20 +328,20 @@ void calculateObcode(X& item, string& error, string& op) {
 		string c2 = toBinValue(opcode[1]);
 		c2[2] = ('0' + n);
 		c2[3] = ('0' + i);
-		cout << "c2 => " << c2 << endl;
+		//cout << "c2 => " << c2 << endl;
 		c2 = toHexValue(c2);
-		cout << "c2 hex => " << c2 << endl;
+		//cout << "c2 hex => " << c2 << endl;
 		string c3 = "0000";
 		c3[0] = ('0' + x);
 		c3[1] = ('0' + b);
 		c3[2] = ('0' + p);
 		c3[3] = ('0' + e);
-		cout << "c3 => " << c3 << endl;
+		//cout << "c3 => " << c3 << endl;
 		c3 = toHexValue(c3);
-		cout << "c3 hex=> " << c3 << endl;
+		//cout << "c3 hex=> " << c3 << endl;
 		obcode += c2 + c3 + temp;
-		cout << "temp =>" << temp << endl;
-		cout << "object code  => " << obcode << endl;
+		//cout << "temp =>" << temp << endl;
+		//cout << "object code  => " << obcode << endl;
 		item.obcode = obcode;
 	}
 }

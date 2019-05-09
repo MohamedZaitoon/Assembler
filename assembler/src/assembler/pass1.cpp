@@ -590,8 +590,8 @@ ll calculate(string a, string b, string op, string& error, ll curloc,
 	ll valueA, valueB;
 	getValue(a, valueA, ta, error, curloc);
 	getValue(b, valueB, tb, error, curloc);
-	cout<<a<<" "<<valueA<<" "<<ta<<endl;
-	cout<<b<<" "<<valueB<<" "<<tb<<endl;
+	//cout<<a<<" "<<valueA<<" "<<ta<<endl;
+	//cout<<b<<" "<<valueB<<" "<<tb<<endl;
 	if (error.empty()) {
 		if (!op.compare("+")) {
 			if ((ta == temp.absol && (tb == temp.reloc || tb == temp.absol))
@@ -645,7 +645,7 @@ void getValue(string x, ll& value, bool& ta, string& error, ll curloc) {
 			symbol sy = it->second;
 			ta = sy.addressType;
 			value = sy.address;
-			cout<<x<<" "<<value<<endl;
+			//cout<<x<<" "<<value<<endl;
 		} else {
 			value = -1;
 			error += x + " undefined symbol, ";
