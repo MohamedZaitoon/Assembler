@@ -97,7 +97,7 @@ bool pass2() {
 					//handle last text record in file later
 					cout << "test record length: " << textRec.size() / 2
 							<< endl;
-					textRec = adjustString((textRec.size()-cnt) / 2, 2)
+					textRec = adjustString((textRec.size() - cnt) / 2, 2)
 							+ textRec;
 					wof << textRec << endl;
 					initTextRec(wof, curloc);
@@ -116,13 +116,13 @@ bool pass2() {
 
 		}
 		//write last text record
-		textRec = adjustString((textRec.size()-cnt) / 2, 2) + textRec;
+		textRec = adjustString((textRec.size() - cnt) / 2, 2) + textRec;
 		wof << textRec << endl;
 		//write end record
 		wof << "E" << adjustString(startadrs, 6) << endl;
 		//write last report(list file) line
 		writeReport(wreport, item);
-		if (i < sz) {
+		if (i < sz-1) {
 			//extera statement
 			ero = true;
 			writeErrorP2(wreport, "extera statement after end statement");
@@ -149,22 +149,36 @@ void calculateObcode(X& item, string& error, string& op) {
 	string dis;
 	ll adrs;
 	smatch sm;
-	if (opinfo.operands == 2) {
+	if (opinfo.formate == 2) {
 		obcode += opcode.substr(1, 1);
-		if (regex_match(operand, sm, r2operand)) {
-			string first = sm[1].str();
-			string second = sm[2].str();
-			auto fr = register_tab.find(first);
-			auto sc = register_tab.find(second);
-			if (fr != register_tab.end() && sc != register_tab.end()) {
-				obcode += dec_to_hex(fr->second) + "" + dec_to_hex(sc->second);
-				item.obcode = obcode;
+		if (opinfo.operands == 2) {
+			if (regex_match(operand, sm, r2operand)) {
+				string first = sm[1].str();
+				string second = sm[2].str();
+				auto fr = register_tab.find(first);
+				auto sc = register_tab.find(second);
+				if (fr != register_tab.end() && sc != register_tab.end()) {
+					obcode += dec_to_hex(fr->second) + ""
+							+ dec_to_hex(sc->second);
+					item.obcode = obcode;
+				} else {
+					error += "Invalid operand";
+				}
+			} else {
+				error +=
+						"this instruction must have two operand or invalid operand,";
+			}
+		} else if (opinfo.operands == 1) {
+			if (regex_match(operand, sm, rlabel)) {
+				string first = sm[1].str();
+				auto fr = register_tab.find(first);
+				if (fr != register_tab.end()) {
+					obcode += dec_to_hex(fr->second) + "0";
+					item.obcode = obcode;
+				}
 			} else {
 				error += "Invalid operand";
 			}
-		} else {
-			error +=
-					"this instruction must have two operand or invalid operand,";
 		}
 	} else if (opinfo.formate == 3 && opinfo.operands == 1) {
 
@@ -191,17 +205,17 @@ void calculateObcode(X& item, string& error, string& op) {
 			string perfix = sm[1].str();
 			string oprnd = sm[2].str();
 			if (!perfix.compare("#")) {
-				n = 1;
-				x = i = 0;
-			} else {
 				i = 1;
-				n = x = 0;
+				x = n = 0;
+			} else {
+				n = 1;
+				i = x = 0;
 			}
 			if (!trim(oprnd).compare("*")) {
 				adrs = curloc;
 			} else if (regex_match(oprnd, rdig)) {
-				adrs = to_int(sm[1].str());
-				b=p=0;
+				adrs = to_int(oprnd);
+				b = p = 0;
 				dis = dec_to_hex(adrs);
 			} else {
 				auto sy = symtab.find(oprnd);
@@ -246,8 +260,9 @@ void calculateObcode(X& item, string& error, string& op) {
 			e = 1;
 			p = b = 0;
 			dis = dec_to_hex(adrs);
-		} else if (((i & !n) || (i & !n)) && !dis.empty()) {
-
+		} else if (((i & !n) || (!i & n)) && !dis.empty()) {
+			e = 0;
+			p = b = 0;
 		} else {
 			e = 0;
 			ll disp = adrs - pc;
@@ -258,12 +273,13 @@ void calculateObcode(X& item, string& error, string& op) {
 				dis = dec_to_hex(disp);
 				cout << "displacement in hex " << dis << endl;
 			} else if (enableBase) {
+				p = 0;
+				b = 1;
 				disp = adrs - br;
 				if (disp > 0 && disp < 4096) {
-					p = 0;
-					b = 1;
 					dis = dec_to_hex(disp);
 				} else {
+					dis = "0";
 					error += "overflow in Displacement field";
 				}
 			} else {
@@ -280,7 +296,7 @@ void calculateObcode(X& item, string& error, string& op) {
 		dis = "0";
 	}
 
-	if (error.empty() && opinfo.operands != 2) {
+	if (opinfo.formate == 3) {
 		stringstream ss;
 		string temp;
 		if (e) {
@@ -330,7 +346,6 @@ void initTextRec(ofstream& w, ll locctr) {
  *  ex. 15 =>   00000f
  */
 
-
 void wirteInitialLinep2(ofstream& w) {
 	w << endl << endl << setw(40) << "# Pass 2 #" << endl;
 	w << ::left << setw(jf) << "LC" << setw(jf) << "obcode" << setw(jf)
@@ -345,8 +360,9 @@ void writeReport(ofstream& w, X& item) {
 	s << setfill('0') << setw(6) << ::hex << item.locctr;
 
 	w << ::left << setw(jf) << s.str() << setw(jf) << item.obcode << setw(jf)
-			<< item.stat.getLabel() << setw(jf) << item.stat.getMnemonic()
-			<< setw(jf) << item.stat.getOperand() << endl;
+			<< item.stat.getLabel() << setw(jf)
+			<< plus + item.stat.getMnemonic() << setw(jf)
+			<< item.stat.getOperand() << endl;
 }
 void writeErrorP2(ofstream& w, string error) {
 

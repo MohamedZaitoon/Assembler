@@ -126,8 +126,8 @@ void load_optab() {
 	addToOptab("STCH", make_info(3, "54", 1));
 	addToOptab("STF", make_info(3, "80", 1));
 	addToOptab("STI", make_info(3, "D4", 1));
-	addToOptab("STL", make_info(3, "D4", 1));
-	addToOptab("STS", make_info(3, "14", 1));
+	addToOptab("STL", make_info(3, "14", 1));
+	addToOptab("STS", make_info(3, "7C", 1));
 	addToOptab("STSW", make_info(3, "E8", 1));
 	addToOptab("STT", make_info(3, "84", 1));
 	addToOptab("STX", make_info(3, "10", 1));

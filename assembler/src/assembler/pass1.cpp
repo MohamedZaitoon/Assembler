@@ -101,9 +101,10 @@ string pass1(string path) {
 					string error = "";
 					op = to_upper(ins.getMnemonic());
 					// handel when the end of operation
+					ll l = locctr;
 					if (!ins.is_comment()) {
 						// search for length of format to add to locctr
-						ll l = locctr;
+
 						auto it = optab.find(op);
 						if (it != optab.end()) {
 							info inf = it->second;
@@ -178,7 +179,7 @@ string pass1(string path) {
 							foundError = true;
 							writeError(write, ins.getError() + ", " + error);
 						}
-						X item(locctr, ins,"");
+						X item(l, ins,"");
 						//addToIntermediate(item);
 						intermediate.push_back(item);
 						//set litrals on output file
