@@ -122,7 +122,7 @@ bool pass2() {
 		wof << "E" << adjustString(startadrs, 6) << endl;
 		//write last report(list file) line
 		writeReport(wreport, item);
-		if (i < sz-1) {
+		if (i < sz - 1) {
 			//extera statement
 			ero = true;
 			writeErrorP2(wreport, "extera statement after end statement");
@@ -186,7 +186,21 @@ void calculateObcode(X& item, string& error, string& op) {
 			adrs = to_int(sm[1].str());
 			n = i = 1;
 			x = 0;
+		} else if (regex_match(operand, sm, rexp)) {
+			string first = sm[1].str();
+			string o = sm[2].str();
+			string second = sm[3].str();
+			bool type = 0;
+			int result = calculate(first, second, o, error, curloc, type);
+			adrs = result;
+			n = i = 1;
+			x = 0;
+			if (type == symbol().absol) {
+				b = p = 0;
+				dis = dec_to_hex(adrs);
+			}
 		} else if (trim(operand).compare("*") == 0) {
+
 			adrs = curloc;
 			n = i = 1;
 			x = 0;
@@ -302,12 +316,12 @@ void calculateObcode(X& item, string& error, string& op) {
 		if (e) {
 			ss << setfill('0') << setw(5) << dis;
 			temp = ss.str();
+			temp = temp.substr(temp.size()-5,5);
 		} else {
 			ss << setfill('0') << setw(6) << dis;
 			temp = ss.str();
 			int sz = temp.size();
-			temp = temp.substr(sz - 3, 1) + temp.substr(sz - 2, 1)
-					+ temp.substr(sz - 1, 1);
+			temp = temp.substr(sz - 3, 3);
 		}
 		string c2 = toBinValue(opcode[1]);
 		c2[2] = ('0' + n);

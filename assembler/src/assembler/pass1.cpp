@@ -24,11 +24,8 @@ void writeError(ofstream& w, string error);
 void wirteInitialLine(ofstream& write);
 void printSymbolTab(ofstream& w);
 bool validLitral(string& literal, string& error);
-void setLitral(statement& ins,ofstream& write);
-
+void setLitral(statement& ins, ofstream& write);
 vector<string> code_lines;
-
-
 
 ll locctr;
 ll startaddrs;
@@ -75,7 +72,7 @@ string pass1(string path) {
 						foundError = true;
 					}
 
-					X item(locctr, ins,"");
+					X item(locctr, ins, "");
 					//addToIntermediate(item);
 					intermediate.push_back(item);
 				} else if (ins.is_comment()) {
@@ -89,7 +86,7 @@ string pass1(string path) {
 					if (ins.has_error())
 						writeError(write, ins.getError());
 
-					X item(locctr, ins,"");
+					X item(locctr, ins, "");
 					//addToIntermediate(item);
 					intermediate.push_back(item);
 				}
@@ -133,13 +130,14 @@ string pass1(string path) {
 									if (validLitral(lit, error)) {
 										string type;
 										int length;
-										string value = valueOfLitral(ins.getOperand(),type);
-										if(type == "W"){
+										string value = valueOfLitral(
+												ins.getOperand(), type);
+										if (type == "W") {
 											length = 3;
-										}else {
-											length = value.size()/2;
+										} else {
+											length = value.size() / 2;
 										}
-										Literal l(lit,value,length,-1);
+										Literal l(lit, value, length, -1);
 
 										addToLittab(l);
 									}
@@ -149,8 +147,8 @@ string pass1(string path) {
 							it = derctivetab.find(op);
 							if (it != derctivetab.end()) {
 								if (!op.compare("LTORG")) {
-										isltorg = true;
-								}else{
+									isltorg = true;
+								} else {
 									handleDerictive(ins, op, p, error);
 								}
 							} else { //handle existence during parsing
@@ -167,7 +165,8 @@ string pass1(string path) {
 								//add to smbol table (label , locct)
 								symbol s(temp.address, temp.length, temp.type,
 										temp.addressType);
-								symtab.insert(make_pair(to_upper(ins.getLabel()), s)); // @suppress("Invalid arguments")
+								symtab.insert(
+										make_pair(to_upper(ins.getLabel()), s)); // @suppress("Invalid arguments")
 
 							} else {
 								error += "Symbol '" + ins.getLabel()
@@ -179,12 +178,12 @@ string pass1(string path) {
 							foundError = true;
 							writeError(write, ins.getError() + ", " + error);
 						}
-						X item(l, ins,"");
+						X item(l, ins, "");
 						//addToIntermediate(item);
 						intermediate.push_back(item);
 						//set litrals on output file
-						if(isltorg){
-							setLitral(ins,write);
+						if (isltorg) {
+							setLitral(ins, write);
 							isltorg = false;
 						}
 					} //end if not a comment
@@ -201,8 +200,8 @@ string pass1(string path) {
 				//save locctr - starting adrs as prog len
 				statement dumy;
 				dumy.setMnemonic("LTORG");
-				setLitral(dumy,write);
-				len = locctr - startaddrs-1;
+				setLitral(dumy, write);
+				len = locctr - startaddrs - 1;
 			} else {
 				write.close();
 				return "This file is Empty";
@@ -382,15 +381,21 @@ void handleDerictive(statement& ins, string op, parser& p, string& error) {
 				error += "undefined label operand,";
 			else {
 				temp.address = it->second.address; // @suppress("Field cannot be resolved")
+				temp.addressType = it->second.addressType; // @suppress("Field cannot be resolved")
 			}
-		} /*else if (p.assertRegex(oprnd,rexp)){
-		 smatch sm;
-		 regex_match(oprnd,sm,rexp);
-		 string first = sm[1].str();
-		 string o = sm[2].str();
-		 string second= sm[3].str();
-		 int result = calculat(first,secod,o);
-		 }*/else {
+		} else if (p.assertRegex(oprnd, rexp)) {
+			smatch sm;
+			regex_match(oprnd, sm, rexp);
+			string first = sm[1].str();
+			string o = sm[2].str();
+			string second = sm[3].str();
+			bool type = 0;
+			int result = calculate(first, second, o, error, temp.address, type);
+			if (error.empty()) {
+				temp.address = result;
+				temp.addressType = type;
+			}
+		} else {
 			if (!ins.has_error())
 				error += "Invalid operand,";
 		}
@@ -413,6 +418,22 @@ void handleDerictive(statement& ins, string op, parser& p, string& error) {
 				locctr = it->second.address; // @suppress("Field cannot be resolved")
 			}
 		} else if (oprnd.compare("*")) {
+		} else if (p.assertRegex(oprnd, rexp)) {
+			smatch sm;
+			regex_match(oprnd, sm, rexp);
+			string first = sm[1].str();
+			string o = sm[2].str();
+			string second = sm[3].str();
+			bool type = 0;
+			int result = calculate(first, second, o, error, temp.address, type);
+			if (error.empty()) {
+				temp.address = result;
+				if(type == temp.reloc)
+					temp.addressType = type;
+				else{
+					error += "result address of expression is not relocatable, ";
+				}
+			}
 		} else {
 			if (!ins.has_error())
 				error += "Invalid operand,";
@@ -502,60 +523,129 @@ bool validLitral(string& literal, string& error) {
 	bool flag = false;
 	if (regex_match(literal, sm, word)) {
 		string c = sm[2].str();
-		literal =sm[1].str()+"'"+c+"'";
+		literal = sm[1].str() + "'" + c + "'";
 		regex_match(c, sm, number);
-		string value =sm[1].str() ;
-		if (value.size() > 4){
-			error +="word must consists of 4 digit,";
+		string value = sm[1].str();
+		if (value.size() > 4) {
+			error += "word must consists of 4 digit,";
 			flag = false;
-		}else flag = true;
+		} else
+			flag = true;
 	} else if (regex_match(literal, sm, chars)) {
-		literal =sm[1].str()+sm[2].str();
-		if(sm[2].str().size() > 3){
-			error +="incorrect length for literal,";
+		literal = sm[1].str() + sm[2].str();
+		if (sm[2].str().size() > 3) {
+			error += "incorrect length for literal,";
 			flag = false;
-		}else flag = true;
+		} else
+			flag = true;
 	} else if (regex_match(literal, sm, rlhex)) {
-		literal =sm[1].str()+sm[2].str();
-		if(sm[2].str().size() > 6){
-			error +="incorrect length for literal ,";
+		literal = sm[1].str() + sm[2].str();
+		if (sm[2].str().size() > 6) {
+			error += "incorrect length for literal ,";
 			flag = false;
-		}else flag = true;
-	}else{
-		error +="Invalid literal, ";
+		} else
+			flag = true;
+	} else {
+		error += "Invalid literal, ";
 	}
 	return flag;
 }
-void setLitral(statement& ins,ofstream& write){
-	if(ins.has_label()){
-		writeError(write,"label field must be blank for this statement ");
+void setLitral(statement& ins, ofstream& write) {
+	if (ins.has_label()) {
+		writeError(write, "label field must be blank for this statement ");
 		foundError = true;
 	}
-	if(!ins.getOperand().empty()){
-		writeError(write,"operand field must be blank for this statement ");
+	if (!ins.getOperand().empty()) {
+		writeError(write, "operand field must be blank for this statement ");
 		foundError = true;
 	}
 	int sz = littab.size();
 	int i = sz;
-	for(i = sz -1; i >=0; i--){
-		if(littab[i].address == -1)continue;
+	for (i = sz - 1; i >= 0; i--) {
+		if (littab[i].address == -1)
+			continue;
 		break;
 	}
 	i++;
 
-	while(i < sz){
+	while (i < sz) {
 		stringstream s;
 		littab[i].address = locctr;
-		statement st("Literal","=>",littab[i].literal,"");
-		X item(locctr, st,littab[i].value);
+		statement st("Literal", "=>", littab[i].literal, "");
+		X item(locctr, st, littab[i].value);
 		//addToIntermediate(item);
 		intermediate.push_back(item);
 		s << setfill('0') << setw(6) << dec_to_hex(locctr);
 		write << std::left << setw(jf) << "" << setw(jf) << s.str() << setw(jf)
-						<<littab[i].value << setw(jf) << "literal"
-						<< setw(jf) << littab[i].literal<<endl;
-		locctr+=littab[i].length;
+				<< littab[i].value << setw(jf) << "literal" << setw(jf)
+				<< littab[i].literal << endl;
+		locctr += littab[i].length;
 		i++;
+	}
+}
+
+ll calculate(string a, string b, string op, string& error, ll curloc,
+		bool type) {
+	bool ta, tb;
+	ll valueA, valueB;
+	getValue(a, valueA, ta, error, curloc);
+	getValue(b, valueB, tb, error, curloc);
+	if (!error.empty()) {
+		if (!op.compare("+")) {
+			if ((ta == temp.absol && (tb == temp.reloc || tb == temp.absol))
+					|| (tb == temp.absol
+							&& (ta == temp.reloc || ta == temp.absol))) {
+				type = ta & tb;
+				return valueA + valueB;
+			} else {
+				error += "Adding 2 relocatable is not allowed";
+				return -1;
+			}
+		} else if (!op.compare("-")) {
+			if (ta == tb) {
+				type = temp.absol;
+				return valueA - valueB;
+			} else {
+				error += "Illegal expression";
+				return -1;
+			}
+		} else if (!op.compare("*")) {
+			if (ta == tb && ta == temp.absol) {
+				type = temp.absol;
+				return valueA * valueB;
+			} else {
+				error += "Illegal expression";
+				return -1;
+			}
+		} else if (!op.compare("/")) {
+			if (ta == tb && ta == temp.absol && valueB != 0) {
+				type = temp.absol;
+				return valueA / valueB;
+			} else {
+				error += "Illegal expression";
+				return -1;
+			}
+		}
+	}
+	return -1;
+}
+void getValue(string x, ll& value, bool& ta, string& error, ll curloc) {
+	if (regex_match(x, rdig)) {
+		ta = temp.absol;
+		value = to_int(x);
+	} else if (x.compare("*")) {
+		ta = temp.reloc;
+		value = curloc;
+	} else {
+		x = to_upper(x);
+		auto it = symtab.find(x);
+		if (it != symtab.end()) {
+			symbol sy = it->second;
+			ta = sy.addressType;
+			value = sy.address;
+		} else {
+			error += x + " undefined symbol, ";
+		}
 	}
 }
 template<typename T>

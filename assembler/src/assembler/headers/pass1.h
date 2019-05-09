@@ -4,6 +4,11 @@ using namespace std;
 #include <string>
 #define ll int
 string pass1(string);
+
+ll calculate(string a, string b, string op, string& error, ll curloc,
+		bool type);
+void getValue(string x, ll& value, bool& ta, string& error, ll curloc);
+
 template<typename T>
 ll to_int(T h);
 

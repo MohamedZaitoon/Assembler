@@ -6,7 +6,7 @@ START   A
          MUL     =w'64'
          ltorg
          RMO     A,S
-         LDA     A
+         LDA     gamma
          MUL     #3
          ADDR    S,A
          STA     ALPHA
@@ -14,4 +14,6 @@ START   A
 ALPHA    RESW    1
 BETA     RESW    1
 GAMMA    RESW    1
+mo       equ     5
+moo      equ     beta+5
          END     

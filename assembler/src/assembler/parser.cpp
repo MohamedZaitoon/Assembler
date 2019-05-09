@@ -177,6 +177,7 @@ void parser::valid_syntax(statement& x) {
 			} else if (assertRegex(operand, rlitral)) {
 				x.setLitral(true);
 			} else if (assertRegex(operand, rconstant)) {
+			}else if (assertRegex(operand, rexp)) {
 			} else {
 				x.setError(x.getError() + " invalid operand,");
 			}
