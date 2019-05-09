@@ -2,7 +2,7 @@
 .Set ALPHA equal to 4 * BETA + 3 * GAMMA
 .Label.  Opcode  The  O p e r a n d 
 .
-         START   0
+START   0
          LDA     BETA
          MUL     #4
          RMO     A,S

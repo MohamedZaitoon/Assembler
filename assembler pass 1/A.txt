@@ -2,7 +2,7 @@
 .Set ALPHA equal to the integer portion of BETA / GAMMA
 .Label.  Opcode  The  O p e r a n d 
 .
-         START   0
+         fuck     adkfnak akfnakn aokfn  
          LDA     BETA
          DIV     GAMMA
          STA     ALPHA

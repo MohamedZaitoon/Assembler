@@ -12,6 +12,7 @@ void evaluate(string s) {
 		cout << "file :" << sm[1].str() << endl;
 		if (!sm[1].str().empty()) {
 			cout << pass1(sm[1].str()) << endl;
+
 		} else {
 			cout << "Empty path" << endl;
 		}

@@ -1,10 +1,16 @@
 line no.  address   label     op-code   operand   comment   
-1         000000    TERMPROJ  START     3A0                 
-1         0003a0    .THIS IS A COMMENT LINE
-2         0003a0    LBL1      BYTE      C'ABCDEF'           
-3         0003a6    LBL2      RESB      4                   
-4         0003aa    LBL2      RESW      1                   
-***Error: , Symbol 'LBL2' is already defined
-5         0003ad    TOP       LDA       ZERO                
-6         0003b0              LDX       #INDEX              
-7         0003b3              end                           
+                    .23456789012345678901234567890123456
+0         000000    .Set ALPHA equal to the integer portion of BETA / GAMMA
+0         000000    .Label.  Opcode  The  O p e r a n d 
+0         000000    .         
+1         000000    fuck      adkfnak   akfnakn aokfn          
+***Error: invalid mnemonic instruction, , 
+2         000003              LDA       BETA                
+3         000006              DIV       GAMMA               
+4         000009              STA       ALPHA               
+5         00000c              J         *                   
+5         00000f    .         
+6         00000f    ALPHA     RESW      1                   
+7         000012    BETA      RESW      1                   
+8         000015    GAMMA     RESW      1                   
+9         000018              END                           

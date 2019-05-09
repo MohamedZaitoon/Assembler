@@ -1,16 +1,20 @@
 #include "headers/assembler.h"
 
-#include <fstream>
-#include <vector>
-#include "headers/parser.h"
-#include <iostream>
-#include <string>
 #include <algorithm>
-#include <sstream>
-#include <map>
+#include <cctype>
+#include <fstream>
 #include <iomanip>
+#include <iostream>
+#include <iterator>
+#include <map>
+#include <regex>
+#include <sstream>
+#include <utility>
+#include <vector>
 
+#include "headers/parser.h"
 #include "headers/statement.h"
+
 #define ll int
 
 using namespace std;
