@@ -1,8 +1,10 @@
 .23456789012345678901234567890123456
 .Set ALPHA equal to 4 * BETA + 3 * GAMMA
+.Label.  Opcode  The  O p e r a n d 
+.
 
-
-
+         J       *
+ALPHA    RESW    1
 BETA     RESW    1
 GAMMA    RESW    1
          END     
