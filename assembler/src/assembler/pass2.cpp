@@ -32,6 +32,8 @@ Literal searchLiteral(string lit);
 ll startadrs = 0;
 const ll jf = 10;
 const ll maxLen = 60;
+ll prevloc;
+
 const string obfile("OBJECTFILE.txt");
 bool enableBase = false;
 string labelBase;
@@ -60,6 +62,7 @@ bool pass2() {
 			writeReport(wreport, item);
 			i++;
 		}
+		prevloc = item.locctr;
 		writeHeader(wof, item);
 		initTextRec(wof, item.locctr);
 		string textRec = "";
@@ -93,7 +96,7 @@ bool pass2() {
 				enableBase = false;
 			}
 			if (item.obcode.size() != 0) {
-				if (!(textRec.size() + item.obcode.size() - cnt <= maxLen)) {
+				if (!(textRec.size() + item.obcode.size() - cnt <= maxLen) || curloc - prevloc >4) {
 					//handle last text record in file later
 					//cout << "test record length: " << textRec.size() / 2<< endl;
 					textRec = adjustString((textRec.size() - cnt) / 2, 2)
@@ -112,6 +115,7 @@ bool pass2() {
 				ero = true;
 				writeErrorP2(wreport, error);
 			}
+			prevloc = curloc;
 
 		}
 		//write last text record
@@ -261,6 +265,8 @@ void calculateObcode(X& item, string& error, string& op) {
 			string literal = sm[1].str() + "'" + c + "'";
 			Literal l = searchLiteral(literal);
 			if (!l.literal.empty()) {
+				n = i = 1;
+				x = 0;
 				adrs = l.address;
 				//cout << adrs << endl;
 			} else {

@@ -138,7 +138,6 @@ string pass1(string path) {
 											length = value.size() / 2;
 										}
 										Literal l(lit, value, length, -1);
-
 										addToLittab(l);
 									}
 								}
@@ -201,7 +200,7 @@ string pass1(string path) {
 				statement dumy;
 				dumy.setMnemonic("LTORG");
 				setLitral(dumy, write);
-				len = locctr - startaddrs - 1;
+				len = locctr - startaddrs;
 			} else {
 				write.close();
 				return "This file is Empty";

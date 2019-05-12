@@ -18,7 +18,7 @@
 
 	const regex rlabel("(^\\s*[a-zA-Z][\\w]*)\\s*$");
 
-	const regex rexp("^\\s*([a-zA-Z][\\w]*|[\\d]+|[*])\\s*([+*-\\/])"
+	const regex rexp("^\\s*([a-zA-Z][\\w]*|[\\d]+|[*])\\s*([+*\\-\\/])"
 			"\\s*([a-zA-Z][\\w]*|[\\d]+|[*])\\s*$");
 
 	const regex rdig("^\\s*[-]?(\\d+)\\s*$");
