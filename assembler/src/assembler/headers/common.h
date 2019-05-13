@@ -95,6 +95,7 @@ void load_optab();
 void load_register_tab();
 void load_derictve();
 string valueOfLitral(string s,string& type);
+Literal searchLiteral(string lit);
 
 string trim(const string& str);
 string to_upper(string s);

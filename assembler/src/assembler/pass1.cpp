@@ -679,12 +679,3 @@ ll hex_to_dec(T h) {
 	return l;
 }
 
-Literal searchLiteral(string lit) {
-	for (Literal l : littab) {
-		if (!lit.compare(l.literal)) {
-			return l;
-		}
-	}
-	Literal dummy("", "", 0, 0);
-	return dummy;
-}
