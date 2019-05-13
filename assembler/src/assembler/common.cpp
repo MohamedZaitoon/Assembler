@@ -19,7 +19,7 @@ vector<X> intermediate;
 vector<Literal> littab;
 bool completePass1 = false;
 ll len;
-const string reportfile = "REPORT.txt";
+const string reportfile = "LISTFILE.txt";
 
 string to_string(int d) {
 	stringstream ss;

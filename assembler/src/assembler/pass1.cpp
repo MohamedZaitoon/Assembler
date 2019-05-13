@@ -25,6 +25,7 @@ void wirteInitialLine(ofstream& write);
 void printSymbolTab(ofstream& w);
 bool validLitral(string& literal, string& error);
 void setLitral(statement& ins, ofstream& write);
+Literal searchLiteral(string lit);
 vector<string> code_lines;
 
 ll locctr;
@@ -128,17 +129,19 @@ string pass1(string path) {
 								if (ins.isLitral()) {
 									string lit = ins.getOperand();
 									if (validLitral(lit, error)) {
-										string type;
-										int length;
-										string value = valueOfLitral(
-												ins.getOperand(), type);
-										if (type == "W") {
-											length = 3;
-										} else {
-											length = value.size() / 2;
+										if (searchLiteral(lit).literal.empty()) {
+											string type;
+											int length;
+											string value = valueOfLitral(
+													ins.getOperand(), type);
+											if (type == "W") {
+												length = 3;
+											} else {
+												length = value.size() / 2;
+											}
+											Literal l(lit, value, length, -1);
+											addToLittab(l);
 										}
-										Literal l(lit, value, length, -1);
-										addToLittab(l);
 									}
 								}
 							}
@@ -427,10 +430,11 @@ void handleDerictive(statement& ins, string op, parser& p, string& error) {
 			int result = calculate(first, second, o, error, temp.address, type);
 			if (error.empty()) {
 				temp.address = result;
-				if(type == temp.reloc)
+				if (type == temp.reloc)
 					temp.addressType = type;
-				else{
-					error += "result address of expression is not relocatable, ";
+				else {
+					error +=
+							"result address of expression is not relocatable, ";
 				}
 			}
 		} else {
@@ -673,4 +677,14 @@ ll hex_to_dec(T h) {
 	ss << h;
 	ss >> std::hex >> l;
 	return l;
+}
+
+Literal searchLiteral(string lit) {
+	for (Literal l : littab) {
+		if (!lit.compare(l.literal)) {
+			return l;
+		}
+	}
+	Literal dummy("", "", 0, 0);
+	return dummy;
 }
