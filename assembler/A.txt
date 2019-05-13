@@ -1,7 +1,7 @@
 START   A
          LDA     5+5
-         MUL     =w'16'
-         MUL     =w'17'
+         TD     =w'16'
+         MUL     =w'15'
          MUL     =w'15'
          MUL     =w'64'
          ltorg
@@ -9,7 +9,7 @@ START   A
          LDA     gamma
          MUL     #3
          ADDR    S,A
-         STA     ALPHA
+         STA     ALPHA,x
          J       *
 ALPHA    RESW    1
 BETA     RESW    1

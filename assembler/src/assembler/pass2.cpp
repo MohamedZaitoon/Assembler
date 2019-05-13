@@ -27,7 +27,7 @@ string toHexValue(string c);
 string toBinValue(char c);
 string valueOfConstat(string s);
 
-Literal searchLiteral(string lit);
+
 
 ll startadrs = 0;
 const ll jf = 10;

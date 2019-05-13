@@ -1,21 +1,117 @@
 line no.  address   label     op-code   operand   comment   
-                    .23456789012345678901234567890123456
-0         000000    .Set ALPHA equal to the integer portion of BETA / GAMMA
-0         000000    .Label.  Opcode  The  O p e r a n d 
-0         000000    .         
-1         000000              LDA       BETA                
-2         000003              DIV       GAMMA               
-3         000006              STA       ALPHA               
-4         000009              J         *                   
-4         00000c    .         
-5         00000c    ALPHA     RESW      1                   
-6         00000f    BETA      RESW      1                   
-7         000012    GAMMA     RESW      1                   
-8         000015              END                           
+1         000000    COPY      START     0                   
+2         000000    FIRST     STL       RETADR              
+3         000003              LDB       #LENGTH             
+4         000006              BASE      LENGTH              
+5         000006    CLOOP     +JSUB     RDREC               
+6         00000a              LDA       LENGTH              
+7         00000d              COMP      #0                  
+8         000010              JEQ       ENDFIL              
+9         000013              +JSUB     WRREC               
+10        000017              J         CLOOP               
+11        00001a    ENDFIL    LDA       EOF                 
+12        00001d              STA       BUFFER              
+13        000020              LDA       #3                  
+14        000023              STA       LENGTH              
+15        000026              +JSUB     WRREC               
+16        00002a              J         @RETADR             
+17        00002d    EOF       BYTE      C'EOF'              
+18        000030    RETADR    RESW      1                   
+19        000033    LENGTH    RESW      1                   
+20        000036    BUFFER    RESB      4096                
+21        001036    RDREC     CLEAR     X                   
+22        001038              CLEAR     A                   
+23        00103a              CLEAR     S                   
+24        00103c              +LDT      #4096               
+25        001040    RLOOP     TD        INPUT               
+26        001043              JEQ       RLOOP               
+27        001046              TD        INPUT               
+28        001049              COMPR     A,S                 
+29        00104b              JEQ       EXIT                
+30        00104e              STCH      BUFFER,X            
+31        001051              TIXR      T                   
+32        001053              JLT       RLOOP               
+33        001056    EXIT      STX       LENGTH              
+34        001059              RSUB                          
+35        00105c    INPUT     BYTE      X'F1'               
+36        00105d    WRREC     CLEAR     X                   
+37        00105f              LDT       LENGTH              
+38        001062    WLOOP     TD        OUTPUT              
+39        001065              JEQ       WLOOP               
+40        001068              LDCH      BUFFER,X            
+41        00106b              WD        OUTPUT              
+42        00106e              TIXR      T                   
+43        001070              JLT       WLOOP               
+44        001073              RSUB                          
+45        001076    OUTPUT    BYTE      X'05'               
+46        001077              END       FIRST               
                     Symbol Table (value in decimal)
 
           Name      Value     Reloc/Absol
           
-          GAMMA     18        Relocatable
-          ALPHA     12        Relocatable
-          BETA      15        Relocatable
+          OUTPUT    4214      Relocatable
+          WLOOP     4194      Relocatable
+          WRREC     4189      Relocatable
+          EXIT      4182      Relocatable
+          RLOOP     4160      Relocatable
+          RDREC     4150      Relocatable
+          CLOOP     6         Relocatable
+          FIRST     0         Relocatable
+          ENDFIL    26        Relocatable
+          BUFFER    54        Relocatable
+          RETADR    48        Relocatable
+          INPUT     4188      Relocatable
+          EOF       45        Relocatable
+          LENGTH    51        Relocatable
+
+
+                              # Pass 2 #
+LC        obcode    Label     Mnemonic  operand   
+000000              COPY      START     0         
+000000    17202d    FIRST     STL       RETADR    
+000003    69202d              LDB       #LENGTH   
+000006                        BASE      LENGTH    
+000006    4B101036  CLOOP     +JSUB     RDREC     
+00000a    032026              LDA       LENGTH    
+00000d    290000              COMP      #0        
+000010    332007              JEQ       ENDFIL    
+000013    4B10105d            +JSUB     WRREC     
+000017    3F2fec              J         CLOOP     
+00001a    032010    ENDFIL    LDA       EOF       
+00001d    0F2016              STA       BUFFER    
+000020    010003              LDA       #3        
+000023    0F200d              STA       LENGTH    
+000026    4B10105d            +JSUB     WRREC     
+00002a    3E2003              J         @RETADR   
+00002d    454f46    EOF       BYTE      C'EOF'    
+000030              RETADR    RESW      1         
+000033              LENGTH    RESW      1         
+000036              BUFFER    RESB      4096      
+001036    B410      RDREC     CLEAR     X         
+001038    B400                CLEAR     A         
+00103a    B440                CLEAR     S         
+00103c    75101000            +LDT      #4096     
+001040    E32019    RLOOP     TD        INPUT     
+001043    332ffa              JEQ       RLOOP     
+001046    E32013              TD        INPUT     
+001049    A004                COMPR     A,S       
+00104b    332008              JEQ       EXIT      
+00104e    57C003              STCH      BUFFER,X  
+001051    B850                TIXR      T         
+001053    3B2fea              JLT       RLOOP     
+001056    134000    EXIT      STX       LENGTH    
+***Error: overflow in Displacement field
+001059    4C0000              RSUB                
+00105c    F1        INPUT     BYTE      X'F1'     
+00105d    B410      WRREC     CLEAR     X         
+00105f    774000              LDT       LENGTH    
+***Error: overflow in Displacement field
+001062    E32011    WLOOP     TD        OUTPUT    
+001065    332ffa              JEQ       WLOOP     
+001068    53C003              LDCH      BUFFER,X  
+00106b    DF2008              WD        OUTPUT    
+00106e    B850                TIXR      T         
+001070    3B2fef              JLT       WLOOP     
+001073    4C0000              RSUB                
+001076    05        OUTPUT    BYTE      X'05'     
+001077                        END       FIRST     
